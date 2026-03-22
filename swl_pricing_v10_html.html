@@ -1,0 +1,1622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>SWL — Agent Quoter 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.13.3/cdn.min.js" defer></script>
+<style>
+:root{
+  --bg:#0a0a0a;--bg2:#111111;--bg3:#1a1a1a;--bg4:#222222;
+  --border:#2a2a2a;--border2:#333333;
+  --gold:#C9A84C;--gold2:#D4A843;--gold-dim:#C9A84C18;
+  --text:#fff;--text2:#aaa;--text3:#666;
+  --green:#22c55e;--green-dim:#22c55e15;
+  --amber:#f59e0b;--amber-dim:#f59e0b15;
+  --red:#ef4444;--red-dim:#ef444415;
+  --blue:#3b82f6;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;font-size:13px;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;height:100vh;overflow:hidden;display:flex;flex-direction:column}
+.header{background:var(--bg2);border-bottom:1px solid var(--border);padding:11px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0}
+.logo{display:flex;align-items:center;gap:9px}
+.logo-text{font-size:17px;font-weight:800;letter-spacing:-.3px}
+.header-sub{font-size:11px;color:var(--text3);margin-top:1px}
+.hbadge{background:var(--gold-dim);color:var(--gold);font-size:11px;font-weight:600;padding:3px 11px;border-radius:99px;border:1px solid #C9A84C33}
+.header-right{display:flex;align-items:center;gap:10px}
+.lang-toggle{display:flex;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;overflow:hidden}
+.lang-btn{padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;border:none;background:transparent;color:var(--text3);font-family:'Inter',sans-serif;transition:all .15s;letter-spacing:.3px}
+.lang-btn.active{background:var(--gold);color:#000}
+.lang-btn:hover:not(.active){color:var(--text);background:var(--bg4)}
+.tabs-bar{background:var(--bg2);border-bottom:1px solid var(--border);display:flex;padding:0 18px;flex-shrink:0;gap:0;overflow-x:auto}
+.tab-btn{padding:9px 13px;font-size:12px;font-weight:600;color:var(--text3);cursor:pointer;border:none;background:transparent;border-bottom:2px solid transparent;transition:all .15s;font-family:'Inter',sans-serif;display:flex;align-items:center;gap:5px;white-space:nowrap}
+.tab-btn:hover{color:var(--text2)}
+.tab-btn.active{color:var(--text);border-bottom-color:var(--gold)}
+.tab-badge{background:var(--gold-dim);color:var(--gold);font-size:10px;font-weight:700;padding:1px 6px;border-radius:99px}
+.content{flex:1;min-height:0;overflow:hidden;position:relative}
+.tab-panel{display:none;position:absolute;inset:0;overflow:hidden;flex-direction:column}
+.tab-panel.active{display:flex}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;border:none;transition:all .15s}
+.btn-gold{background:var(--gold);color:#000}.btn-gold:hover{background:var(--gold2)}
+.btn-out{background:transparent;color:var(--text2);border:1px solid var(--border2)}.btn-out:hover{background:var(--bg3);color:var(--text)}
+.btn-danger{background:transparent;color:var(--red);border:1px solid #ef444430}.btn-danger:hover{background:var(--red-dim)}
+.btn-save{background:transparent;color:var(--gold);border:1px solid #C9A84C44}.btn-save:hover{background:var(--gold-dim)}
+.btn-blue{background:transparent;color:#60a5fa;border:1px solid #3b82f644}.btn-blue:hover{background:#3b82f618}
+.btn-sm{padding:5px 9px;font-size:11px}
+.inp{background:var(--bg3);border:1px solid var(--border2);border-radius:7px;padding:7px 10px;font-size:12px;font-family:'Inter',sans-serif;outline:none;color:var(--text)}
+.inp::placeholder{color:var(--text3)}
+.inp:focus{border-color:#C9A84C55}
+select.inp option{background:var(--bg3)}
+.textarea{background:var(--bg3);border:1px solid var(--border2);border-radius:7px;padding:8px 10px;font-size:12px;font-family:'Inter',sans-serif;outline:none;color:var(--text);resize:vertical;width:100%;min-height:70px;line-height:1.5}
+.textarea:focus{border-color:#C9A84C55}
+.tb{display:inline-block;padding:1px 7px;border-radius:99px;font-size:10px;font-weight:700}
+.t1{background:var(--green-dim);color:var(--green);border:1px solid #22c55e25}
+.t2{background:var(--amber-dim);color:var(--amber);border:1px solid #f59e0b25}
+.t3{background:var(--red-dim);color:var(--red);border:1px solid #ef444425}
+
+/* ── HOME ── */
+.home-scroll{flex:1;overflow-y:auto;min-height:0}
+.home-hero{position:relative;overflow:hidden;min-height:240px;display:flex;align-items:center;padding:44px 48px}
+.home-hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,#0a0a0a 0%,#1a1208 40%,#2a1a06 70%,#0a0a0a 100%)}
+.home-hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(201,168,76,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,.06) 1px,transparent 1px);background-size:40px 40px}
+.home-hero-glow{position:absolute;top:-80px;right:-80px;width:500px;height:500px;background:radial-gradient(circle,rgba(201,168,76,.15) 0%,transparent 70%);pointer-events:none}
+.hero-img-col{position:absolute;right:0;top:0;bottom:0;width:360px;overflow:hidden;opacity:.28}
+.hero-img-col img{width:100%;height:100%;object-fit:cover}
+.home-hero-content{position:relative;z-index:1;max-width:600px}
+.home-hero-eyebrow{display:inline-flex;align-items:center;gap:7px;background:var(--gold-dim);border:1px solid #C9A84C33;border-radius:99px;padding:5px 14px;font-size:11px;font-weight:600;color:var(--gold);letter-spacing:.3px;margin-bottom:16px}
+.home-hero h1{font-size:38px;font-weight:900;letter-spacing:-1.5px;line-height:1.08;margin-bottom:12px}
+.home-hero h1 span{color:var(--gold)}
+.home-hero p{font-size:13px;color:var(--text2);line-height:1.65;margin-bottom:22px;max-width:500px}
+.home-hero-actions{display:flex;gap:10px;flex-wrap:wrap}
+.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--border)}
+.stat-item{padding:16px 24px;border-right:1px solid var(--border)}
+.stat-item:last-child{border-right:none}
+.stat-val{font-size:26px;font-weight:900;color:var(--gold);letter-spacing:-1px;line-height:1}
+.stat-label{font-size:11px;color:var(--text3);margin-top:4px;font-weight:500}
+.stat-sub{font-size:10px;color:var(--text3);margin-top:2px;opacity:.7}
+.home-section{padding:24px 32px}
+.home-section-hd{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:18px}
+.home-section-hd h2{font-size:18px;font-weight:800;letter-spacing:-.4px}
+.home-section-hd p{font-size:12px;color:var(--text3);margin-top:2px}
+.home-section-hd a{font-size:12px;color:var(--gold);cursor:pointer}
+.plat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.plat-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .2s}
+.plat-card:hover{border-color:#C9A84C44;transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.plat-card-img{height:100px;overflow:hidden;position:relative}
+.plat-card-img img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.plat-card:hover .plat-card-img img{transform:scale(1.05)}
+.plat-card-img-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 30%,rgba(17,17,17,.9) 100%)}
+.plat-card-img-badge{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:2px 7px;font-size:10px;font-weight:700;color:var(--text2);backdrop-filter:blur(4px)}
+.plat-card-body{padding:12px 14px 14px}
+.plat-card-name{font-size:12px;font-weight:700;margin-bottom:3px}
+.plat-card-desc{font-size:11px;color:var(--text3);line-height:1.5;margin-bottom:8px}
+.plat-card-impact{font-size:10px;color:var(--green);margin-bottom:8px}
+.plat-card-footer{display:flex;align-items:center;justify-content:space-between}
+.plat-card-count{font-size:10px;color:var(--text3)}
+.plat-card-range{font-size:11px;font-weight:700;color:var(--gold);font-family:monospace}
+.why-section{padding:24px 32px;border-top:1px solid var(--border);background:var(--bg2)}
+.why-section h2{font-size:17px;font-weight:800;letter-spacing:-.4px;margin-bottom:14px}
+.why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.why-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+.why-icon{font-size:18px;margin-bottom:7px}
+.why-title{font-size:12px;font-weight:700;margin-bottom:3px}
+.why-desc{font-size:11px;color:var(--text3);line-height:1.5}
+
+/* ── QUOTER ── */
+.quoter-layout{flex-direction:row !important}
+.sidebar{width:196px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);overflow-y:auto}
+.sidebar-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;padding:10px 13px 4px}
+.plat-btn{width:100%;text-align:left;padding:7px 13px;border:none;border-bottom:1px solid var(--border);background:transparent;cursor:pointer;color:var(--text2);font-family:'Inter',sans-serif;transition:all .12s}
+.plat-btn:hover{background:var(--bg3);color:var(--text)}
+.plat-btn.active{background:var(--bg3);border-left:2px solid var(--gold);padding-left:11px;color:var(--text)}
+.plat-btn .pn{font-weight:600;font-size:12px;line-height:1.3}
+.plat-btn .pm{font-size:10px;color:var(--text3);margin-top:1px}
+.agent-area{flex:1;overflow-y:auto;padding:14px 16px;min-width:0}
+.area-title{font-size:14px;font-weight:700;margin-bottom:2px}
+.area-sub{font-size:11px;color:var(--text3);margin-bottom:10px}
+.search-row{display:flex;gap:7px;margin-bottom:10px;flex-wrap:wrap}
+/* Tier section headers */
+.tier-section{margin-bottom:14px}
+.tier-section-hd{display:flex;align-items:center;justify-content:space-between;padding:6px 10px;border-radius:7px;margin-bottom:6px;cursor:pointer;user-select:none}
+.tier-section-hd.light{background:#22c55e12;border:1px solid #22c55e20}
+.tier-section-hd.full{background:#f59e0b12;border:1px solid #f59e0b20}
+.tier-section-hd.addon{background:#ef444412;border:1px solid #ef444420}
+.tier-hd-left{display:flex;align-items:center;gap:8px}
+.tier-hd-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px}
+.tier-hd-label.light{color:var(--green)}
+.tier-hd-label.full{color:var(--amber)}
+.tier-hd-label.addon{color:var(--red)}
+.tier-hd-count{font-size:10px;color:var(--text3)}
+.tier-hd-right{display:flex;align-items:center;gap:8px}
+.bundle-badge{font-size:10px;font-weight:600;color:var(--gold);background:var(--gold-dim);border:1px solid #C9A84C33;padding:1px 7px;border-radius:99px}
+.tier-select-btn{font-size:10px;color:var(--text3);background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padding:2px 7px;cursor:pointer;font-family:'Inter',sans-serif}
+.tier-select-btn:hover{color:var(--gold);border-color:#C9A84C44}
+.cards{display:flex;flex-direction:column;gap:4px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:9px 11px;display:flex;align-items:flex-start;gap:9px;cursor:pointer;transition:all .12s}
+.card:hover{border-color:var(--border2);background:var(--bg3)}
+.card.sel{border-color:#C9A84C66;background:var(--gold-dim)}
+.chk{width:16px;height:16px;border:1.5px solid var(--border2);border-radius:4px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;color:#000}
+.card.sel .chk{background:var(--gold);border-color:var(--gold)}
+.cinfo{flex:1;min-width:0}
+.cname{font-weight:600;font-size:12px}
+.cmeta{display:flex;gap:6px;margin-top:3px;flex-wrap:wrap;align-items:center}
+.cprice{font-size:11px;color:var(--text3)}
+.cretainer-row{display:flex;align-items:center;gap:4px;margin-top:2px}
+.cretainer-label{font-size:10px;color:var(--text3)}
+.cretainer-val{font-size:11px;color:var(--gold)}
+.cnote{font-size:10px;color:var(--text3);font-style:italic;margin-top:2px}
+.discount-chip{font-size:10px;color:var(--green);font-weight:600;background:var(--green-dim);border:1px solid #22c55e25;border-radius:4px;padding:1px 6px;margin-left:4px}
+/* Quote panel */
+.qp{width:280px;flex-shrink:0;background:var(--bg2);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.qp-head{padding:11px 13px;border-bottom:1px solid var(--border);flex-shrink:0}
+.qp-head h3{font-size:13px;font-weight:700}
+.qp-head p{font-size:11px;color:var(--text3);margin-top:1px}
+.qp-inp{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:7px;padding:7px 10px;font-size:12px;font-family:'Inter',sans-serif;margin-top:7px;outline:none;color:var(--text)}
+.qp-inp::placeholder{color:var(--text3)}
+.qp-inp:focus{border-color:#C9A84C55}
+.qlist{flex:1;overflow-y:auto;padding:7px 12px}
+.qempty{text-align:center;padding:24px 12px;color:var(--text3);font-size:12px}
+.qi{padding:6px 0;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:6px}
+.qi:last-child{border-bottom:none}
+.qi-info{flex:1;min-width:0}
+.qi-name{font-weight:600;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qi-plat{font-size:10px;color:var(--text3)}
+.qi-price{font-size:11px;color:var(--gold);margin-top:2px;font-family:monospace}
+.qi-disc{font-size:10px;color:var(--green);font-weight:600}
+.qi-var{margin-top:4px;display:flex;align-items:center;gap:4px;background:var(--bg3);border:1px solid var(--border2);border-radius:5px;padding:3px 6px}
+.qi-var label{font-size:10px;color:var(--text3);white-space:nowrap}
+.qi-var input{background:transparent;border:none;outline:none;color:var(--gold);font-size:11px;font-family:monospace;width:60px;font-weight:600}
+.qi-var-extra{font-size:10px;color:var(--text3)}
+.qi-rm{background:none;border:none;cursor:pointer;color:var(--text3);font-size:13px;padding:0 2px;flex-shrink:0;line-height:1}
+.qi-rm:hover{color:var(--red)}
+.qtotals{padding:10px 13px;border-top:1px solid var(--border);background:var(--bg3);flex-shrink:0}
+.qtr{display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px}
+.qtr:last-child{margin-bottom:0}
+.qtl{color:var(--text3)}.qtv{font-weight:700;font-family:monospace;font-size:11px}
+.qtr.big .qtl{font-size:12px;font-weight:600;color:var(--text2)}
+.qtr.big .qtv{font-size:13px;color:var(--gold)}
+.qtr.disc-row .qtv{color:var(--green)}
+.qactions{padding:9px 12px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:5px;flex-shrink:0}
+
+/* ── PROJECTS ── */
+.projects-scroll{flex:1;overflow-y:auto;padding:22px 26px;min-height:0}
+.projects-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.projects-header h2{font-size:16px;font-weight:700}
+.proj-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:13px 15px;transition:all .15s;margin-bottom:9px}
+.proj-card:hover{border-color:#C9A84C44}
+.proj-card.active-proj{border-color:var(--gold);background:var(--gold-dim)}
+.proj-card-head{display:flex;align-items:flex-start;gap:11px}
+.proj-icon{width:34px;height:34px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.proj-info{flex:1;min-width:0}
+.proj-name{font-weight:700;font-size:13px;margin-bottom:2px}
+.proj-meta{font-size:11px;color:var(--text3);margin-bottom:5px}
+.proj-agents{display:flex;gap:4px;flex-wrap:wrap}
+.proj-agent-chip{font-size:10px;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padding:2px 6px;color:var(--text2);white-space:nowrap}
+.proj-actions-col{display:flex;gap:5px;flex-direction:column;align-items:flex-end;flex-shrink:0}
+.proj-totals{text-align:right}
+.proj-setup{font-size:11px;color:var(--text3)}
+.proj-retainer{font-size:13px;font-weight:700;color:var(--gold);font-family:monospace}
+.active-badge{background:var(--gold-dim);color:var(--gold);font-size:10px;font-weight:600;padding:2px 7px;border-radius:99px;border:1px solid #C9A84C44}
+.version-badge{background:var(--bg3);color:var(--text3);font-size:10px;font-weight:600;padding:2px 7px;border-radius:99px;border:1px solid var(--border2)}
+.versions-accordion{margin-top:9px;border-top:1px solid var(--border);padding-top:9px}
+.version-row{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid var(--border)}
+.version-row:last-child{border-bottom:none}
+.version-info{flex:1}
+.version-label{font-size:11px;font-weight:600}
+.version-meta{font-size:10px;color:var(--text3)}
+.projects-empty{text-align:center;padding:60px 20px;color:var(--text3)}
+
+/* ── COMPARE ── */
+.compare-scroll{flex:1;overflow-y:auto;padding:18px 22px;min-height:0}
+.compare-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.compare-header h2{font-size:16px;font-weight:700}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.compare-col{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.compare-col-head{padding:10px 13px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg3)}
+.compare-col-head h3{font-size:12px;font-weight:700}
+.compare-col-body{padding:11px 13px}
+.compare-empty{text-align:center;padding:20px;color:var(--text3);font-size:12px}
+.compare-agent-row{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--border);font-size:11px}
+.compare-agent-row:last-child{border-bottom:none}
+.compare-summary{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px}
+.compare-row{display:grid;grid-template-columns:190px 1fr 1fr;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);align-items:center;font-size:12px}
+.compare-row:last-child{border-bottom:none}
+.compare-row.hdr{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px}
+.compare-metric{color:var(--text3)}
+.compare-val{font-weight:700;font-family:monospace}
+.compare-winner{color:var(--green)}
+.compare-loser{color:var(--text3)}
+
+/* ── DISCOUNTS TAB ── */
+.disc-scroll{flex:1;overflow-y:auto;padding:22px 26px;min-height:0}
+.disc-scroll h2{font-size:16px;font-weight:700;margin-bottom:4px}
+.disc-scroll .sub{font-size:12px;color:var(--text3);margin-bottom:20px}
+.disc-section{margin-bottom:24px}
+.disc-section h3{font-size:13px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.disc-section h3 span{font-size:11px;color:var(--text3);font-weight:400}
+.disc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.disc-card{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:13px 14px}
+.disc-card-label{font-size:11px;font-weight:600;color:var(--text2);margin-bottom:4px}
+.disc-card-desc{font-size:10px;color:var(--text3);margin-bottom:8px;line-height:1.5}
+.disc-inp-row{display:flex;align-items:center;gap:6px}
+.disc-inp-row input{background:var(--bg3);border:1px solid var(--border2);border-radius:5px;padding:5px 8px;font-size:13px;font-family:monospace;color:var(--gold);width:60px;outline:none;font-weight:700}
+.disc-inp-row input:focus{border-color:#C9A84C55}
+.disc-inp-row span{font-size:12px;color:var(--text3)}
+.pkg-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:15px 16px;margin-bottom:10px}
+.pkg-card-hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.pkg-card-name{font-size:13px;font-weight:700}
+.pkg-card-badge{background:var(--gold-dim);color:var(--gold);font-size:10px;font-weight:600;padding:2px 8px;border-radius:99px;border:1px solid #C9A84C33}
+.pkg-field{display:flex;flex-direction:column;gap:3px;margin-bottom:8px}
+.pkg-field label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px}
+.pkg-field input,.pkg-field textarea{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:6px 9px;font-size:11px;font-family:'Inter',sans-serif;outline:none;color:var(--text)}
+.pkg-field input:focus,.pkg-field textarea:focus{border-color:#C9A84C55}
+.pkg-field textarea{resize:vertical;min-height:50px;line-height:1.5}
+.pkg-fields-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+/* ── SETUP ── */
+.setup-toolbar{padding:11px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0;background:var(--bg2);flex-wrap:wrap}
+.setup-toolbar h2{font-size:13px;font-weight:700}
+.setup-toolbar .sub{font-size:11px;color:var(--text3)}
+.setup-filter{display:flex;gap:7px;margin-left:auto}
+.setup-scroll{flex:1;overflow-y:auto;min-height:0}
+.setup-table{width:100%;border-collapse:collapse}
+.setup-table thead th{position:sticky;top:0;z-index:2;background:var(--bg3);padding:7px 9px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid var(--border2);white-space:nowrap}
+.setup-table tbody tr{border-bottom:1px solid var(--border)}
+.setup-table tbody tr:hover{background:#ffffff06}
+.setup-table td{padding:4px 7px;vertical-align:middle}
+.plat-tag{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;background:var(--bg4);color:var(--text3);white-space:nowrap}
+.ed{background:var(--bg3);border:1px solid transparent;border-radius:5px;padding:4px 7px;font-size:11px;font-family:'Inter',sans-serif;color:var(--text);outline:none}
+.ed:focus{border-color:#C9A84C55;background:var(--bg4)}
+.tier-sel{background:var(--bg3);border:1px solid transparent;border-radius:5px;padding:4px 6px;font-size:11px;font-family:'Inter',sans-serif;color:var(--text);width:56px;outline:none}
+.reset-btn{background:none;border:1px solid var(--border2);cursor:pointer;color:var(--text3);font-size:10px;padding:2px 6px;border-radius:4px;font-family:'Inter',sans-serif}
+.reset-btn:hover{color:var(--gold);border-color:#C9A84C44}
+.var-block{display:flex;flex-direction:column;gap:3px}
+.var-row{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text3)}
+.var-row input{background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padding:3px 6px;font-size:11px;font-family:monospace;color:var(--gold);width:68px;outline:none}
+
+/* ── MEDIA ── */
+.media-scroll{flex:1;overflow-y:auto;padding:22px 26px;min-height:0}
+.media-scroll h2{font-size:16px;font-weight:700;margin-bottom:4px}
+.media-scroll .sub{font-size:12px;color:var(--text3);margin-bottom:18px}
+.media-section{margin-bottom:22px}
+.media-section h3{font-size:13px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.media-section h3 span{font-size:11px;color:var(--text3);font-weight:400}
+.logo-upload-box{background:var(--bg2);border:2px dashed var(--border2);border-radius:12px;padding:18px;display:flex;align-items:center;gap:14px;max-width:460px;cursor:pointer;transition:border-color .15s}
+.logo-upload-box:hover{border-color:#C9A84C66}
+.logo-preview{width:56px;height:56px;background:var(--bg3);border-radius:10px;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
+.logo-preview img{width:100%;height:100%;object-fit:contain}
+.logo-upload-info h4{font-size:12px;font-weight:600;margin-bottom:3px}
+.logo-upload-info p{font-size:11px;color:var(--text3);margin-bottom:5px}
+.url-row{display:flex;gap:8px;align-items:center;margin-top:8px;max-width:460px}
+.url-row input{flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:6px 9px;font-size:11px;font-family:'Inter',sans-serif;outline:none;color:var(--text)}
+.url-row input:focus{border-color:#C9A84C55}
+.plat-media-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.plat-media-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.plat-media-preview{height:72px;overflow:hidden;position:relative;cursor:pointer}
+.plat-media-preview img{width:100%;height:100%;object-fit:cover}
+.plat-media-overlay{position:absolute;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s}
+.plat-media-preview:hover .plat-media-overlay{opacity:1}
+.plat-media-overlay span{font-size:11px;font-weight:600;color:#fff}
+.plat-media-body{padding:9px 10px}
+.plat-media-name{font-size:11px;font-weight:700;margin-bottom:4px}
+.plat-url-inp{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:5px 8px;font-size:11px;font-family:'Inter',sans-serif;outline:none;color:var(--text);margin-bottom:5px}
+.plat-desc-inp{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:5px 8px;font-size:11px;font-family:'Inter',sans-serif;outline:none;color:var(--text);resize:vertical;min-height:44px;line-height:1.5;margin-bottom:5px}
+.media-btn-row{display:flex;gap:5px}
+
+/* ── MODAL ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:100;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:13px;padding:20px;width:740px;max-width:96vw;max-height:92vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,.6)}
+.modal-hd{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:13px}
+.modal-hd h2{font-size:14px;font-weight:700}
+.modal-hd p{font-size:11px;color:var(--text3);margin-top:2px}
+.modal-x{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;cursor:pointer;color:var(--text3);width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.modal-x:hover{color:var(--text)}
+.form-row{display:flex;gap:10px;margin-bottom:10px}
+.form-group{display:flex;flex-direction:column;gap:4px;flex:1}
+.form-group label{font-size:11px;font-weight:600;color:var(--text2)}
+.form-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--gold);margin:13px 0 7px;padding-bottom:5px;border-bottom:1px solid var(--border)}
+
+/* ── PLATFORM DETAIL MODAL ── */
+.plat-modal{width:820px;max-width:96vw;background:var(--bg2)}
+.plat-modal-hero{height:180px;overflow:hidden;position:relative;border-radius:9px;margin-bottom:16px}
+.plat-modal-hero img{width:100%;height:100%;object-fit:cover}
+.plat-modal-hero-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 30%,rgba(10,10,10,.92) 100%)}
+.plat-modal-hero-text{position:absolute;bottom:14px;left:18px;right:18px}
+.plat-modal-hero-text h2{font-size:22px;font-weight:900;letter-spacing:-.5px;margin-bottom:3px}
+.plat-modal-hero-text p{font-size:12px;color:var(--text2);line-height:1.5}
+.plat-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.plat-detail-col{background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:14px 15px}
+.plat-detail-col-hd{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.plat-detail-col-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px}
+.plat-detail-col-label.light{color:var(--green)}
+.plat-detail-col-label.full{color:var(--amber)}
+.plat-detail-col-label.addon{color:var(--red)}
+.plat-detail-agent{display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid var(--border);font-size:11px}
+.plat-detail-agent:last-child{border-bottom:none}
+.plat-detail-agent-name{flex:1;color:var(--text2)}
+.plat-detail-meta-row{display:flex;gap:12px;margin-top:10px;padding-top:8px;border-top:1px solid var(--border)}
+.plat-detail-meta-item{display:flex;flex-direction:column;gap:2px}
+.plat-detail-meta-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text3)}
+.plat-detail-meta-val{font-size:12px;font-weight:700;color:var(--gold)}
+.plat-addon-list{margin-top:6px}
+.plat-addon-item{display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid var(--border);font-size:11px}
+.plat-addon-item:last-child{border-bottom:none}
+
+/* PDF wrap */
+.pdf-wrap{background:#fff;border-radius:9px;padding:26px 30px;color:#1a1a1a;font-family:'Inter',sans-serif}
+</style>
+</head>
+<body x-data="agentApp()" x-init="init()">
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo">
+    <template x-if="!customLogo">
+      <svg width="26" height="22" viewBox="0 0 30 26" fill="none"><path d="M0 18L6 10L12 18L6 22Z" fill="url(#h1)"/><path d="M9 12L15 4L21 12L15 16Z" fill="url(#h2)"/><path d="M18 18L24 10L30 18L24 22Z" fill="url(#h3)"/>
+        <defs><linearGradient id="h1" x1="6" y1="10" x2="6" y2="22" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#e8c96a"/><stop offset="100%" stop-color="#8B5E1A"/></linearGradient><linearGradient id="h2" x1="15" y1="4" x2="15" y2="16" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#f0d070"/><stop offset="100%" stop-color="#C9A84C"/></linearGradient><linearGradient id="h3" x1="24" y1="10" x2="24" y2="22" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#d4a843"/><stop offset="100%" stop-color="#7a5015"/></linearGradient></defs>
+      </svg>
+    </template>
+    <template x-if="customLogo"><img :src="customLogo" style="height:28px;width:auto;object-fit:contain" alt="Logo"/></template>
+    <div>
+      <div class="logo-text">SWL</div>
+      <div class="header-sub" x-text="t('headerSub')"></div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="lang-toggle">
+      <button class="lang-btn" :class="{active:lang==='en'}" @click="setLang('en')">EN</button>
+      <button class="lang-btn" :class="{active:lang==='es'}" @click="setLang('es')">ES</button>
+    </div>
+    <span class="hbadge" x-text="t('badge')"></span>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs-bar">
+  <button class="tab-btn" :class="{active:activeTab==='home'}" @click="activeTab='home'">🏠 <span x-text="t('home')"></span></button>
+  <button class="tab-btn" :class="{active:activeTab==='quoter'}" @click="activeTab='quoter'">
+    🧩 <span x-text="t('buildQuote')"></span>
+    <span class="tab-badge" x-show="quote.length>0" x-text="quote.length"></span>
+  </button>
+  <button class="tab-btn" :class="{active:activeTab==='projects'}" @click="activeTab='projects'">
+    📁 <span x-text="t('projects')"></span>
+    <span class="tab-badge" x-show="savedProjects.length>0" x-text="savedProjects.length"></span>
+  </button>
+  <button class="tab-btn" :class="{active:activeTab==='compare'}" @click="activeTab='compare'">⚖️ <span x-text="t('compare')"></span></button>
+  <button class="tab-btn" :class="{active:activeTab==='discounts'}" @click="activeTab='discounts'">🏷️ <span x-text="t('discounts')"></span></button>
+  <button class="tab-btn" :class="{active:activeTab==='setup'}" @click="activeTab='setup'">⚙️ <span x-text="t('agentSetup')"></span></button>
+  <button class="tab-btn" :class="{active:activeTab==='media'}" @click="activeTab='media'">🖼️ <span x-text="t('media')"></span></button>
+</div>
+
+<div class="content">
+
+<!-- ══ HOME ══ -->
+<div class="tab-panel" :class="{active:activeTab==='home'}">
+  <div class="home-scroll">
+    <div class="home-hero">
+      <div class="home-hero-bg"></div><div class="home-hero-grid"></div><div class="home-hero-glow"></div>
+      <div class="hero-img-col"><img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80" alt=""/></div>
+      <div class="home-hero-content">
+        <div class="home-hero-eyebrow"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13,2 3,14 12,14 11,22 21,10 12,10"/></svg><span x-text="t('heroEyebrow')"></span></div>
+        <h1><span x-text="t('heroH1a')"></span><br><span x-text="t('heroH1b')"></span></h1>
+        <p x-text="t('heroP')"></p>
+        <div class="home-hero-actions">
+          <button class="btn btn-gold" style="padding:10px 20px;font-size:13px" @click="activeTab='quoter'" x-text="t('buildQuoteBtn')"></button>
+          <button class="btn btn-out" style="padding:10px 20px;font-size:13px" @click="activeTab='setup'" x-text="t('configureBtn')"></button>
+        </div>
+      </div>
+    </div>
+    <div class="stats-bar">
+      <div class="stat-item"><div class="stat-val" x-text="totalAgents()"></div><div class="stat-label" x-text="t('statAgents')"></div><div class="stat-sub" x-text="t('statAgentsSub')"></div></div>
+      <div class="stat-item"><div class="stat-val">500+</div><div class="stat-label" x-text="t('statHours')"></div><div class="stat-sub" x-text="t('statHoursSub')"></div></div>
+      <div class="stat-item"><div class="stat-val">3–5×</div><div class="stat-label" x-text="t('statROI')"></div><div class="stat-sub" x-text="t('statROISub')"></div></div>
+      <div class="stat-item"><div class="stat-val" x-text="savedProjects.length||'—'"></div><div class="stat-label" x-text="t('statQuotes')"></div><div class="stat-sub"><span x-show="savedProjects.length===0" x-text="t('noProjects')"></span><span x-show="savedProjects.length>0" style="color:var(--gold);cursor:pointer" @click="activeTab='projects'" x-text="t('viewArrow')"></span></div></div>
+    </div>
+    <div class="home-section">
+      <div class="home-section-hd"><div><h2 x-text="t('platformPortfolio')"></h2><p x-text="t('platformSub')"></p></div><a @click="activeTab='quoter'" x-text="t('viewAll')"></a></div>
+      <div class="plat-grid">
+        <template x-for="p in platforms" :key="p.id">
+          <div class="plat-card" @click="openPlatModal(p)">
+            <div class="plat-card-img">
+              <img :src="p.img" :alt="p.name" loading="lazy"/>
+              <div class="plat-card-img-overlay"></div>
+              <div class="plat-card-img-badge" x-text="p.agents.length+' '+t('agents')"></div>
+            </div>
+            <div class="plat-card-body">
+              <div class="plat-card-name" x-text="p.name"></div>
+              <div class="plat-card-desc" x-text="p.desc[lang]"></div>
+              <div class="plat-card-impact" x-text="p.impact"></div>
+              <div class="plat-card-footer"><span class="plat-card-count" x-text="t('setupFrom')"></span><span class="plat-card-range" x-text="p.setupRange"></span></div>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+    <div class="why-section">
+      <h2 x-text="t('whyTitle')"></h2>
+      <div class="why-grid">
+        <div class="why-card"><div class="why-icon">⚡</div><div class="why-title" x-text="t('why1t')"></div><div class="why-desc" x-text="t('why1d')"></div></div>
+        <div class="why-card"><div class="why-icon">🔗</div><div class="why-title" x-text="t('why2t')"></div><div class="why-desc" x-text="t('why2d')"></div></div>
+        <div class="why-card"><div class="why-icon">📊</div><div class="why-title" x-text="t('why3t')"></div><div class="why-desc" x-text="t('why3d')"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ QUOTER ══ -->
+<div class="tab-panel quoter-layout" :class="{active:activeTab==='quoter'}">
+  <div class="sidebar">
+    <div class="sidebar-label" x-text="t('platforms')"></div>
+    <template x-for="p in platforms" :key="p.id">
+      <button class="plat-btn" :class="{active:activePlat===p.id}" @click="activePlat=p.id;search='';filterTier=0">
+        <div class="pn" x-text="p.name"></div>
+        <div class="pm" x-text="p.agents.length+' '+t('agents')"></div>
+      </button>
+    </template>
+  </div>
+  <div class="agent-area">
+    <div class="area-title" x-text="currentPlatform().name"></div>
+    <div class="area-sub" x-text="currentPlatform().agents.length+' '+t('agentsClick')"></div>
+    <!-- Bundle discount indicator -->
+    <template x-if="activeBundleDiscount()>0">
+      <div style="background:var(--green-dim);border:1px solid #22c55e25;border-radius:7px;padding:6px 10px;margin-bottom:8px;font-size:11px;color:var(--green);display:flex;align-items:center;gap:6px">
+        <span>🏷️</span>
+        <span x-text="activeBundleDiscountLabel()"></span>
+      </div>
+    </template>
+    <div class="search-row">
+      <input class="inp" style="width:170px" type="text" :placeholder="t('searchAgent')" x-model="search"/>
+      <select class="inp" x-model.number="filterTier">
+        <option value="0" x-text="t('allTiers')"></option>
+        <option value="1">T1 — Light</option><option value="2">T2 — Full</option><option value="3">T3 — Add-on</option>
+      </select>
+    </div>
+    <!-- Grouped by tier section -->
+    <template x-if="!search && filterTier===0">
+      <div>
+        <template x-for="sec in tierSections()" :key="sec.key">
+          <template x-if="sec.agents.length>0">
+            <div class="tier-section">
+              <div class="tier-section-hd" :class="sec.key" @click="sec.open=!sec.open">
+                <div class="tier-hd-left">
+                  <span class="tier-hd-label" :class="sec.key" x-text="sec.label"></span>
+                  <span class="tier-hd-count" x-text="'('+sec.agents.length+')'"></span>
+                  <template x-if="sec.bundleDisc>0">
+                    <span class="bundle-badge" x-text="sec.bundleDisc+'% bundle'"></span>
+                  </template>
+                </div>
+                <div class="tier-hd-right">
+                  <button class="tier-select-btn" @click.stop="selectAllInSection(sec)" x-text="allInSectionSelected(sec)?t('deselectAll'):t('selectAll')"></button>
+                  <span style="font-size:12px;color:var(--text3)" x-text="sec.open?'▾':'▸'"></span>
+                </div>
+              </div>
+              <template x-if="sec.open">
+                <div class="cards">
+                  <template x-for="a in sec.agents" :key="a._uid">
+                    <div class="card" :class="{sel:isSelected(a)}" @click="toggleAgent(a)">
+                      <div class="chk"><template x-if="isSelected(a)"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></template></div>
+                      <div class="cinfo">
+                        <div style="display:flex;align-items:center;gap:6px">
+                          <span class="cname" x-text="a.name"></span>
+                          <template x-if="getAgentDiscount(a)>0">
+                            <span class="discount-chip" x-text="'-'+getAgentDiscount(a)+'%'"></span>
+                          </template>
+                        </div>
+                        <div class="cmeta"><span class="tb" :class="'t'+a.tier" x-text="'T'+a.tier"></span><span class="cprice" x-text="t('setup')+': '+a.setup"></span></div>
+                        <div class="cretainer-row"><span class="cretainer-label" x-text="t('retainer')+':'"></span><span class="cretainer-val" x-text="a.retainerShort"></span></div>
+                        <div class="cnote" x-text="a.note[lang]"></div>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+              </template>
+            </div>
+          </template>
+        </template>
+      </div>
+    </template>
+    <!-- Search/filter results flat -->
+    <template x-if="search || filterTier>0">
+      <div class="cards">
+        <template x-for="a in filtered()" :key="a._uid">
+          <div class="card" :class="{sel:isSelected(a)}" @click="toggleAgent(a)">
+            <div class="chk"><template x-if="isSelected(a)"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></template></div>
+            <div class="cinfo">
+              <div class="cname" x-text="a.name"></div>
+              <div class="cmeta"><span class="tb" :class="'t'+a.tier" x-text="'T'+a.tier"></span><span class="cprice" x-text="t('setup')+': '+a.setup"></span></div>
+              <div class="cretainer-row"><span class="cretainer-label" x-text="t('retainer')+':'"></span><span class="cretainer-val" x-text="a.retainerShort"></span></div>
+              <div class="cnote" x-text="a.note[lang]"></div>
+            </div>
+          </div>
+        </template>
+        <template x-if="filtered().length===0"><div style="text-align:center;padding:36px;color:var(--text3);font-size:12px" x-text="t('noMatch')"></div></template>
+      </div>
+    </template>
+  </div>
+  <!-- Quote Panel -->
+  <div class="qp">
+    <div class="qp-head">
+      <h3 x-text="t('quoteBuilder')"></h3>
+      <p x-text="quote.length+' '+t('agentsSelected')"></p>
+      <input class="qp-inp" type="text" :placeholder="t('projectName')" x-model="projectName"/>
+    </div>
+    <div class="qlist">
+      <template x-if="quote.length===0"><div class="qempty"><div style="font-size:22px;margin-bottom:8px">✦</div><div x-text="t('quoteEmpty')"></div></div></template>
+      <template x-for="(item,i) in quote" :key="item.uid">
+        <div class="qi">
+          <div class="qi-info">
+            <div class="qi-name" x-text="item.name"></div>
+            <div class="qi-plat" x-text="item.platform"></div>
+            <div class="qi-price" x-text="t('setup')+': '+item.setup"></div>
+            <div class="qi-price" x-text="t('retainer')+': '+computedRetainerStr(item)"></div>
+            <template x-if="getAgentDiscount(item)>0">
+              <div class="qi-disc" x-text="'🏷️ '+getAgentDiscount(item)+'% '+t('discount')"></div>
+            </template>
+            <template x-if="item.varLabel">
+              <div class="qi-var" @click.stop>
+                <label x-text="item.varLabel+':'"></label>
+                <input type="number" :min="item.varMin||0" x-model.number="item.varValue" @input="persist()"/>
+                <span class="qi-var-extra" x-text="item.varUnit||''"></span>
+              </div>
+            </template>
+          </div>
+          <button class="qi-rm" @click="removeFromQuote(i)">✕</button>
+        </div>
+      </template>
+    </div>
+    <div class="qtotals" x-show="quote.length>0">
+      <div class="qtr"><span class="qtl" x-text="t('agents')"></span><span class="qtv" x-text="quote.length"></span></div>
+      <div class="qtr"><span class="qtl" x-text="t('setupLow')"></span><span class="qtv" x-text="'$'+fmtN(setupLow())"></span></div>
+      <div class="qtr"><span class="qtl" x-text="t('setupHigh')"></span><span class="qtv" x-text="'$'+fmtN(setupHigh())"></span></div>
+      <template x-if="totalDiscount()>0">
+        <div class="qtr disc-row"><span class="qtl" x-text="'🏷️ '+t('discountApplied')"></span><span class="qtv" x-text="'-$'+fmtN(totalDiscount())+'/mo'"></span></div>
+      </template>
+      <div class="qtr big"><span class="qtl" x-text="t('monthlyRetainer')"></span><span class="qtv" x-text="'$'+fmtN(retainerTotal())+'/mo'"></span></div>
+    </div>
+    <div class="qactions">
+      <button class="btn btn-gold" @click="openPdfCustomizer()" x-show="quote.length>0" x-text="t('previewPDF')"></button>
+      <button class="btn btn-save" @click="saveProject()" x-show="quote.length>0" x-text="t('saveProject')"></button>
+      <button class="btn btn-out" @click="exportCSV()" x-show="quote.length>0" x-text="t('exportCSV')"></button>
+      <button class="btn btn-danger" @click="clearQuote()" x-show="quote.length>0" x-text="t('clearQuote')"></button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PROJECTS ══ -->
+<div class="tab-panel" :class="{active:activeTab==='projects'}">
+  <div class="projects-scroll">
+    <div class="projects-header"><div><h2 x-text="t('savedProjects')"></h2><p x-text="savedProjects.length+' '+t('projectsSaved')"></p></div><button class="btn btn-out btn-sm" @click="clearAllProjects()" x-show="savedProjects.length>0" x-text="t('clearAll')"></button></div>
+    <template x-if="savedProjects.length===0"><div class="projects-empty"><div style="font-size:36px;margin-bottom:12px">📁</div><h3 style="font-size:15px;font-weight:600;color:var(--text2);margin-bottom:6px" x-text="t('noProjectsYet')"></h3><p x-text="t('noProjectsHint')"></p></div></template>
+    <template x-for="(proj,pi) in savedProjects" :key="proj.id">
+      <div class="proj-card" :class="{'active-proj':currentProjectId===proj.id}">
+        <div class="proj-card-head">
+          <div class="proj-icon">📋</div>
+          <div class="proj-info">
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:2px">
+              <div class="proj-name" x-text="proj.name||t('unnamedProject')"></div>
+              <span class="active-badge" x-show="currentProjectId===proj.id" x-text="t('active')"></span>
+              <span class="version-badge" x-text="(proj.versions?proj.versions.length:1)+' v'"></span>
+            </div>
+            <div class="proj-meta" x-text="proj.agents.length+' '+t('agents')+' · '+t('saved')+' '+proj.date"></div>
+            <div class="proj-agents">
+              <template x-for="(chip,ci) in proj.agents.slice(0,5)" :key="ci"><span class="proj-agent-chip" x-text="chip.name"></span></template>
+              <template x-if="proj.agents.length>5"><span class="proj-agent-chip" x-text="'+'+(proj.agents.length-5)+' '+t('more')"></span></template>
+            </div>
+          </div>
+          <div class="proj-actions-col">
+            <div class="proj-totals"><div class="proj-setup" x-text="'Setup: $'+fmtN(proj.setupLow)+' – $'+fmtN(proj.setupHigh)"></div><div class="proj-retainer" x-text="'$'+fmtN(proj.retainerTotal)+'/mo'"></div><div style="font-size:10px;color:var(--text3);margin-top:2px" x-text="proj.date"></div></div>
+            <div style="display:flex;gap:5px;margin-top:6px">
+              <button class="btn btn-gold btn-sm" @click="loadProject(pi)" x-text="t('load')"></button>
+              <button class="btn btn-out btn-sm" @click="openPdfCustomizerForProject(pi)">PDF</button>
+              <button class="btn btn-blue btn-sm" @click="proj._showVersions=!proj._showVersions" x-show="proj.versions&&proj.versions.length>1">⏱</button>
+              <button class="btn btn-danger btn-sm" @click="deleteProject(pi)">✕</button>
+            </div>
+          </div>
+        </div>
+        <template x-if="proj._showVersions&&proj.versions&&proj.versions.length>1">
+          <div class="versions-accordion">
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text3);margin-bottom:6px" x-text="t('versionHistory')"></div>
+            <template x-for="(v,vi) in proj.versions" :key="vi">
+              <div class="version-row">
+                <div class="version-info"><div class="version-label" x-text="'v'+(vi+1)+' — '+v.date"></div><div class="version-meta" x-text="v.agents.length+' '+t('agents')+' · Setup: $'+fmtN(v.setupLow)+'–$'+fmtN(v.setupHigh)+' · $'+fmtN(v.retainerTotal)+'/mo'"></div></div>
+                <button class="btn btn-out btn-sm" @click="loadVersion(pi,vi)" x-text="t('load')"></button>
+                <button class="btn btn-out btn-sm" @click="openPdfCustomizerForVersion(pi,vi)">PDF</button>
+              </div>
+            </template>
+          </div>
+        </template>
+      </div>
+    </template>
+  </div>
+</div>
+
+<!-- ══ COMPARE ══ -->
+<div class="tab-panel" :class="{active:activeTab==='compare'}">
+  <div class="compare-scroll">
+    <div class="compare-header"><div><h2 x-text="t('compareTitle')"></h2><p style="font-size:12px;color:var(--text3);margin-top:2px" x-text="t('compareSub')"></p></div><button class="btn btn-gold btn-sm" @click="exportComparePDF()" x-show="compareA.agents.length>0||compareB.agents.length>0" x-text="t('exportComparePDF')"></button></div>
+    <div class="compare-grid">
+      <div class="compare-col">
+        <div class="compare-col-head"><h3 x-text="t('scenarioA')"></h3><div style="display:flex;gap:5px"><select class="inp" style="font-size:11px;padding:4px 7px" x-model="compareAId" @change="loadCompareProject('A')"><option value="" x-text="t('selectProject')"></option><template x-for="(p,i) in savedProjects" :key="p.id"><option :value="String(i)" x-text="p.name||t('unnamedProject')"></option></template></select><button class="btn btn-gold btn-sm" @click="loadCurrentToCompare('A')" x-show="quote.length>0" x-text="t('useCurrent')"></button></div></div>
+        <div class="compare-col-body"><template x-if="compareA.agents.length===0"><div class="compare-empty" x-text="t('compareEmpty')"></div></template><template x-if="compareA.agents.length>0"><div><div style="font-size:11px;color:var(--text3);margin-bottom:8px" x-text="compareA.agents.length+' '+t('agents')"></div><template x-for="a in compareA.agents" :key="a.name+a.platform"><div class="compare-agent-row"><span style="color:var(--text2);flex:1;font-size:11px" x-text="a.name"></span><span style="color:var(--gold);font-family:monospace;font-size:10px" x-text="'$'+fmtN(a.retainerNum||0)+'/mo'"></span></div></template></div></template></div>
+      </div>
+      <div class="compare-col">
+        <div class="compare-col-head"><h3 x-text="t('scenarioB')"></h3><div style="display:flex;gap:5px"><select class="inp" style="font-size:11px;padding:4px 7px" x-model="compareBId" @change="loadCompareProject('B')"><option value="" x-text="t('selectProject')"></option><template x-for="(p,i) in savedProjects" :key="p.id"><option :value="String(i)" x-text="p.name||t('unnamedProject')"></option></template></select><button class="btn btn-gold btn-sm" @click="loadCurrentToCompare('B')" x-show="quote.length>0" x-text="t('useCurrent')"></button></div></div>
+        <div class="compare-col-body"><template x-if="compareB.agents.length===0"><div class="compare-empty" x-text="t('compareEmpty')"></div></template><template x-if="compareB.agents.length>0"><div><div style="font-size:11px;color:var(--text3);margin-bottom:8px" x-text="compareB.agents.length+' '+t('agents')"></div><template x-for="a in compareB.agents" :key="a.name+a.platform"><div class="compare-agent-row"><span style="color:var(--text2);flex:1;font-size:11px" x-text="a.name"></span><span style="color:var(--gold);font-family:monospace;font-size:10px" x-text="'$'+fmtN(a.retainerNum||0)+'/mo'"></span></div></template></div></template></div>
+      </div>
+    </div>
+    <template x-if="compareA.agents.length>0||compareB.agents.length>0">
+      <div class="compare-summary">
+        <h3 x-text="t('comparisonSummary')"></h3>
+        <div class="compare-row hdr"><span></span><span x-text="compareA.name||t('scenarioA')"></span><span x-text="compareB.name||t('scenarioB')"></span></div>
+        <div class="compare-row"><span class="compare-metric" x-text="t('agents')"></span><span class="compare-val" x-text="compareA.agents.length"></span><span class="compare-val" x-text="compareB.agents.length"></span></div>
+        <div class="compare-row"><span class="compare-metric" x-text="t('setupLow')"></span><span class="compare-val" :class="compareSetupLow('A')<=compareSetupLow('B')?'compare-winner':'compare-loser'" x-text="'$'+fmtN(compareSetupLow('A'))"></span><span class="compare-val" :class="compareSetupLow('B')<=compareSetupLow('A')?'compare-winner':'compare-loser'" x-text="'$'+fmtN(compareSetupLow('B'))"></span></div>
+        <div class="compare-row"><span class="compare-metric" x-text="t('monthlyRetainer')"></span><span class="compare-val" :class="compareRetainer('A')<=compareRetainer('B')?'compare-winner':'compare-loser'" x-text="'$'+fmtN(compareRetainer('A'))+'/mo'"></span><span class="compare-val" :class="compareRetainer('B')<=compareRetainer('A')?'compare-winner':'compare-loser'" x-text="'$'+fmtN(compareRetainer('B'))+'/mo'"></span></div>
+        <div class="compare-row"><span class="compare-metric" x-text="t('roiHours')"></span><span class="compare-val compare-winner" x-text="calcROI(compareA.agents).hours+'h/mo'"></span><span class="compare-val compare-winner" x-text="calcROI(compareB.agents).hours+'h/mo'"></span></div>
+        <div class="compare-row"><span class="compare-metric" x-text="t('roiAvg')"></span><span class="compare-val compare-winner" x-text="calcROI(compareA.agents).roi+'x'"></span><span class="compare-val compare-winner" x-text="calcROI(compareB.agents).roi+'x'"></span></div>
+        <div class="compare-row"><span class="compare-metric" x-text="t('roiPayback')"></span><span class="compare-val" x-text="calcROI(compareA.agents).payback+' mo'"></span><span class="compare-val" x-text="calcROI(compareB.agents).payback+' mo'"></span></div>
+      </div>
+    </template>
+  </div>
+</div>
+
+<!-- ══ DISCOUNTS ══ -->
+<div class="tab-panel" :class="{active:activeTab==='discounts'}">
+  <div class="disc-scroll">
+    <h2 x-text="t('discountsTitle')"></h2>
+    <p class="sub" x-text="t('discountsSub')"></p>
+
+    <!-- Bundle discounts -->
+    <div class="disc-section">
+      <h3>🏷️ <span x-text="t('bundleDiscounts')"></span> <span x-text="t('bundleDiscountsHint')"></span></h3>
+      <div class="disc-grid">
+        <template x-for="p in platforms" :key="p.id">
+          <div class="disc-card">
+            <div class="disc-card-label" x-text="p.name"></div>
+            <div class="disc-card-desc" x-text="t('lightDiscDesc')"></div>
+            <div class="disc-inp-row">
+              <input type="number" min="0" max="50" step="1" x-model.number="discounts.light[p.id]" @change="persist()"/>
+              <span>% — Light (T1)</span>
+            </div>
+            <div style="margin-top:6px" class="disc-inp-row">
+              <input type="number" min="0" max="50" step="1" x-model.number="discounts.lightFull[p.id]" @change="persist()"/>
+              <span>% — Light+Full (T1+T2)</span>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    <!-- Commercial Packages -->
+    <div class="disc-section">
+      <h3>📦 <span x-text="t('packages')"></span> <span x-text="t('packagesHint')"></span></h3>
+      <template x-for="(pkg,pi) in packages" :key="pkg.id">
+        <div class="pkg-card">
+          <div class="pkg-card-hd">
+            <div>
+              <div class="pkg-card-name" x-text="pkg.name"></div>
+              <div style="font-size:11px;color:var(--text3);margin-top:2px" x-text="pkg.objective"></div>
+            </div>
+            <span class="pkg-card-badge" x-text="pkg.id"></span>
+          </div>
+          <div class="pkg-fields-grid">
+            <div class="pkg-field"><label x-text="t('pkgName')"></label><input type="text" x-model="pkg.name" @change="persist()"/></div>
+            <div class="pkg-field"><label x-text="t('pkgScope')"></label><input type="text" x-model="pkg.scope" @change="persist()"/></div>
+            <div class="pkg-field"><label x-text="t('pkgTimeline')"></label><input type="text" x-model="pkg.timeline" @change="persist()"/></div>
+            <div class="pkg-field"><label x-text="t('pkgInvestment')"></label><input type="text" x-model="pkg.investment" @change="persist()"/></div>
+          </div>
+          <div class="pkg-field"><label x-text="t('pkgObjective')"></label><input type="text" x-model="pkg.objective" @change="persist()"/></div>
+          <div class="pkg-field"><label x-text="t('pkgValue')"></label><textarea x-model="pkg.valueDelivered" rows="2" @change="persist()"></textarea></div>
+          <div class="pkg-field"><label x-text="t('pkgDiscount')"></label>
+            <div class="disc-inp-row" style="margin-top:2px">
+              <input type="number" min="0" max="50" step="1" x-model.number="pkg.discount" @change="persist()"/>
+              <span x-text="'% '+t('offRetainer')"></span>
+            </div>
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SETUP ══ -->
+<div class="tab-panel" :class="{active:activeTab==='setup'}" style="flex-direction:column">
+  <div class="setup-toolbar">
+    <div><h2 x-text="t('setupTitle')"></h2><span class="sub" x-text="t('setupSub')"></span></div>
+    <div class="setup-filter">
+      <input class="inp" style="width:140px" type="text" :placeholder="t('search')" x-model="setupSearch"/>
+      <select class="inp" x-model="setupPlatFilter">
+        <option value="" x-text="t('allPlatforms')"></option>
+        <template x-for="p in platforms" :key="p.id"><option :value="p.id" x-text="p.name"></option></template>
+      </select>
+      <button class="btn btn-out btn-sm" @click="resetAllAgents()" x-text="t('resetAll')"></button>
+    </div>
+  </div>
+  <div class="setup-scroll">
+    <table class="setup-table">
+      <thead><tr>
+        <th style="width:105px" x-text="t('platform')"></th>
+        <th style="width:52px">Tier</th>
+        <th style="width:145px" x-text="t('agentName')"></th>
+        <th x-text="t('note')"></th>
+        <th style="width:115px" x-text="t('setupPrice')"></th>
+        <th style="width:95px" x-text="t('baseRetainer')"></th>
+        <th style="width:200px" x-text="t('varConfig')"></th>
+        <th style="width:44px"></th>
+      </tr></thead>
+      <tbody>
+        <template x-for="a in allAgentsFiltered()" :key="a._uid">
+          <tr>
+            <td><span class="plat-tag" x-text="a._platformName"></span></td>
+            <td><select class="tier-sel" x-model.number="a.tier" @change="syncQuoteAgent(a)"><option value="1">T1</option><option value="2">T2</option><option value="3">T3</option></select></td>
+            <td><input class="ed" style="width:135px" type="text" x-model="a.name" @change="syncQuoteAgent(a)"/></td>
+            <td><input class="ed" style="width:100%;min-width:170px" type="text" :value="a.note[lang]" @change="a.note[lang]=$event.target.value;syncQuoteAgent(a)"/></td>
+            <td><input class="ed" style="width:105px" type="text" x-model="a.setup" @change="parseSetupRange(a);syncQuoteAgent(a)" placeholder="$5,000–8,000"/></td>
+            <td>
+              <div style="display:flex;align-items:center;gap:3px">
+                <span style="font-size:10px;color:var(--text3)">$</span>
+                <input class="ed" style="width:60px;font-family:monospace" type="number" step="50" :value="a.retainerNum" @change="a.retainerNum=+$event.target.value;a.retainerBase='$'+fmtN(a.retainerNum);rebuildShort(a);syncQuoteAgent(a)"/>
+                <span style="font-size:10px;color:var(--text3)">/mo</span>
+              </div>
+            </td>
+            <td>
+              <template x-if="a.varLabel">
+                <div class="var-block">
+                  <div class="var-row"><span style="min-width:46px" x-text="a.varLabel+':'"></span><span>min</span><input type="number" x-model.number="a.varMin" @change="rebuildShort(a);syncQuoteAgent(a)"/><span x-text="a.varUnit"></span></div>
+                  <div class="var-row"><span style="min-width:46px">Rate: $</span><input type="number" step="0.01" x-model.number="a.varRate" @change="rebuildShort(a);syncQuoteAgent(a)"/><span x-text="'/'+a.varUnit"></span></div>
+                </div>
+              </template>
+              <template x-if="!a.varLabel"><span style="font-size:10px;color:var(--text3)" x-text="t('fixedOnly')"></span></template>
+            </td>
+            <td><button class="reset-btn" @click="resetOneAgent(a)">↺</button></td>
+          </tr>
+        </template>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ MEDIA ══ -->
+<div class="tab-panel" :class="{active:activeTab==='media'}">
+  <div class="media-scroll">
+    <h2 x-text="t('mediaBranding')"></h2>
+    <p class="sub" x-text="t('mediaSub')"></p>
+    <div class="media-section">
+      <h3>🏷️ Logo <span x-text="t('logoHint')"></span></h3>
+      <div class="logo-upload-box" @click="$refs.logoFile.click()">
+        <div class="logo-preview">
+          <template x-if="customLogo"><img :src="customLogo" alt="Logo"/></template>
+          <template x-if="!customLogo"><svg width="24" height="20" viewBox="0 0 30 26" fill="none"><path d="M0 18L6 10L12 18L6 22Z" fill="#C9A84C"/><path d="M9 12L15 4L21 12L15 16Z" fill="#e8c96a"/><path d="M18 18L24 10L30 18L24 22Z" fill="#d4a843"/></svg></template>
+        </div>
+        <div class="logo-upload-info"><h4 x-text="t('uploadLogo')"></h4><p>PNG, JPG or SVG · Max 2MB</p><button class="btn btn-out btn-sm" @click.stop="$refs.logoFile.click()" x-text="t('chooseFile')"></button></div>
+      </div>
+      <input type="file" x-ref="logoFile" accept="image/*" style="display:none" @change="onLogoFile($event)"/>
+      <div class="url-row">
+        <input type="text" :placeholder="t('logoUrlPlaceholder')" x-model="logoUrlInput" @keydown.enter="applyLogoUrl()"/>
+        <button class="btn btn-out btn-sm" @click="applyLogoUrl()" x-text="t('apply')"></button>
+        <button class="btn btn-danger btn-sm" x-show="customLogo" @click="customLogo='';logoUrlInput='';persist()" x-text="t('reset')"></button>
+      </div>
+    </div>
+    <div class="media-section">
+      <h3>🖼️ <span x-text="t('platformImages')"></span> <span x-text="t('platformImagesHint')"></span></h3>
+      <div class="plat-media-grid">
+        <template x-for="(p,i) in platforms" :key="p.id">
+          <div class="plat-media-card">
+            <div class="plat-media-preview" @click="document.getElementById('pf_'+p.id).click()">
+              <img :src="p.img" :alt="p.name"/>
+              <div class="plat-media-overlay"><span x-text="t('changeImage')"></span></div>
+            </div>
+            <div class="plat-media-body">
+              <div class="plat-media-name" x-text="p.name"></div>
+              <input class="plat-url-inp" type="text" :placeholder="t('pasteImageUrl')" :value="p.img" @change="p.img=$event.target.value;persist()" @keydown.enter="p.img=$event.target.value;persist()"/>
+              <textarea class="plat-desc-inp" rows="2" :placeholder="t('editDesc')" :value="p.desc[lang]" @change="p.desc[lang]=$event.target.value;persist()" @keydown.ctrl.enter="p.desc[lang]=$event.target.value;persist()"></textarea>
+              <div class="media-btn-row">
+                <button class="btn btn-out btn-sm" @click="document.getElementById('pf_'+p.id).click()" x-text="t('upload')"></button>
+                <button class="btn btn-danger btn-sm" @click="resetPlatImg(p.id)" x-text="t('reset')"></button>
+              </div>
+            </div>
+            <input type="file" accept="image/*" :id="'pf_'+p.id" style="display:none" @change="onPlatFile($event,p.id)"/>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /content -->
+
+<!-- ══ PLATFORM DETAIL MODAL ══ -->
+<div class="modal-bg" x-show="showPlatModal" @click.self="showPlatModal=false" style="display:none">
+  <div class="modal plat-modal" x-show="platModalData">
+    <div class="modal-hd"><div><h2 x-text="platModalData&&platModalData.name"></h2></div><button class="modal-x" @click="showPlatModal=false">✕</button></div>
+    <template x-if="platModalData">
+      <div>
+        <div class="plat-modal-hero">
+          <img :src="platModalData.img" :alt="platModalData.name"/>
+          <div class="plat-modal-hero-overlay"></div>
+          <div class="plat-modal-hero-text">
+            <h2 x-text="platModalData.name"></h2>
+            <p x-text="platModalData.desc[lang]"></p>
+          </div>
+        </div>
+        <!-- Impact row -->
+        <div style="background:var(--green-dim);border:1px solid #22c55e20;border-radius:8px;padding:9px 13px;margin-bottom:14px;font-size:11px;color:var(--green);display:flex;align-items:center;gap:8px">
+          <span>📈</span><span x-text="platModalData.impact"></span>
+        </div>
+        <!-- T1 / T2 columns -->
+        <div class="plat-detail-grid">
+          <!-- Light T1 -->
+          <div class="plat-detail-col">
+            <div class="plat-detail-col-hd">
+              <span class="tb t1">T1</span>
+              <span class="plat-detail-col-label light" x-text="t('lightDeployment')"></span>
+            </div>
+            <template x-for="a in platModalAgents(platModalData,'light')" :key="a.name">
+              <div class="plat-detail-agent">
+                <span class="plat-detail-agent-name" x-text="a.name"></span>
+                <span style="font-size:10px;color:var(--gold);font-family:monospace" x-text="'$'+fmtN(a.retainerNum||0)+'/mo'"></span>
+              </div>
+            </template>
+            <div class="plat-detail-meta-row">
+              <div class="plat-detail-meta-item"><div class="plat-detail-meta-label" x-text="t('implTime')"></div><div class="plat-detail-meta-val" x-text="platModalData.implLight||'3–6 wks'"></div></div>
+              <div class="plat-detail-meta-item"><div class="plat-detail-meta-label">ROI</div><div class="plat-detail-meta-val" x-text="platModalROI(platModalData,'light')"></div></div>
+              <div class="plat-detail-meta-item"><div class="plat-detail-meta-label" x-text="t('retainerFrom')"></div><div class="plat-detail-meta-val" x-text="'$'+fmtN(platModalRetainer(platModalData,'light'))+'/mo'"></div></div>
+            </div>
+          </div>
+          <!-- Full T2 -->
+          <div class="plat-detail-col">
+            <div class="plat-detail-col-hd">
+              <span class="tb t2">T2</span>
+              <span class="plat-detail-col-label full" x-text="t('fullDeployment')"></span>
+            </div>
+            <template x-for="a in platModalAgents(platModalData,'full')" :key="a.name">
+              <div class="plat-detail-agent">
+                <span class="plat-detail-agent-name" x-text="a.name"></span>
+                <span style="font-size:10px;color:var(--gold);font-family:monospace" x-text="'$'+fmtN(a.retainerNum||0)+'/mo'"></span>
+              </div>
+            </template>
+            <div class="plat-detail-meta-row">
+              <div class="plat-detail-meta-item"><div class="plat-detail-meta-label" x-text="t('implTime')"></div><div class="plat-detail-meta-val" x-text="platModalData.implFull||'8–14 wks'"></div></div>
+              <div class="plat-detail-meta-item"><div class="plat-detail-meta-label">ROI</div><div class="plat-detail-meta-val" x-text="platModalROI(platModalData,'full')"></div></div>
+              <div class="plat-detail-meta-item"><div class="plat-detail-meta-label" x-text="t('retainerFrom')"></div><div class="plat-detail-meta-val" x-text="'$'+fmtN(platModalRetainer(platModalData,'full'))+'/mo'"></div></div>
+            </div>
+          </div>
+        </div>
+        <!-- Add-ons T3 -->
+        <template x-if="platModalAgents(platModalData,'addon').length>0">
+          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:13px 15px;margin-bottom:14px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px">
+              <span class="tb t3">T3</span>
+              <span class="plat-detail-col-label addon" x-text="t('addons')"></span>
+            </div>
+            <div class="plat-addon-list">
+              <template x-for="a in platModalAgents(platModalData,'addon')" :key="a.name">
+                <div class="plat-addon-item">
+                  <span style="flex:1;color:var(--text2);font-size:11px" x-text="a.name"></span>
+                  <span style="font-size:10px;color:var(--text3)" x-text="a.setup"></span>
+                  <span style="font-size:10px;color:var(--gold);font-family:monospace;margin-left:10px" x-text="'$'+fmtN(a.retainerNum||0)+'/mo'"></span>
+                </div>
+              </template>
+            </div>
+          </div>
+        </template>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-gold" style="flex:1;padding:10px" @click="goToQuoterFromModal(platModalData.id)" x-text="'🧩 '+t('buildQuoteBtn')"></button>
+          <button class="btn btn-out" @click="showPlatModal=false" x-text="t('close')"></button>
+        </div>
+      </div>
+    </template>
+  </div>
+</div>
+
+<!-- ══ PDF CUSTOMIZER MODAL ══ -->
+<div class="modal-bg" x-show="showCustomizer" @click.self="showCustomizer=false" style="display:none">
+  <div class="modal" style="width:680px">
+    <div class="modal-hd"><div><h2 x-text="t('customizeQuote')"></h2><p x-text="t('customizeSub')"></p></div><button class="modal-x" @click="showCustomizer=false">✕</button></div>
+    <div class="form-section-title" x-text="t('clientInfo')"></div>
+    <div class="form-row">
+      <div class="form-group"><label x-text="t('clientName')"></label><input class="inp" type="text" x-model="pdfMeta.clientName" :placeholder="t('clientNamePH')"/></div>
+      <div class="form-group"><label x-text="t('contactName')"></label><input class="inp" type="text" x-model="pdfMeta.contactName" :placeholder="t('contactNamePH')"/></div>
+    </div>
+    <div class="form-section-title" x-text="t('introContext')"></div>
+    <div class="form-group" style="margin-bottom:9px"><label x-text="t('introLabel')"></label><textarea class="textarea" x-model="pdfMeta.intro" :placeholder="t('introPH')" style="min-height:75px"></textarea></div>
+    <div class="form-group" style="margin-bottom:9px"><label x-text="t('prioritiesLabel')"></label><textarea class="textarea" x-model="pdfMeta.priorities" :placeholder="t('prioritiesPH')" style="min-height:55px"></textarea></div>
+    <div class="form-section-title" x-text="t('commercialTerms')"></div>
+    <div class="form-group" style="margin-bottom:9px"><label x-text="t('conditionsLabel')"></label><textarea class="textarea" x-model="pdfMeta.conditions" style="min-height:75px"></textarea></div>
+    <div class="form-group" style="margin-bottom:13px"><label x-text="t('nextStepsLabel')"></label><textarea class="textarea" x-model="pdfMeta.nextSteps" style="min-height:95px"></textarea></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-gold" style="flex:1" @click="openPDF()" x-text="t('generatePDF')"></button>
+      <button class="btn btn-out" @click="showCustomizer=false" x-text="t('cancel')"></button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PDF PREVIEW MODAL ══ -->
+<div class="modal-bg" x-show="showModal" @click.self="showModal=false" style="display:none">
+  <div class="modal">
+    <div class="modal-hd"><div><h2 x-text="t('quotePreview')"></h2><p>Cmd+P / Ctrl+P → Save as PDF</p></div><button class="modal-x" @click="showModal=false">✕</button></div>
+    <div style="display:flex;gap:7px;margin-bottom:13px">
+      <button class="btn btn-gold" style="flex:1" @click="printPDF()" x-text="'🖨️  '+t('printPDF')"></button>
+      <button class="btn btn-out" @click="showModal=false" x-text="t('close')"></button>
+    </div>
+    <div id="pdf-content" class="pdf-wrap">
+      <!-- Header -->
+      <div style="display:flex;align-items:center;gap:7px;margin-bottom:2px">
+        <template x-if="customLogo"><img :src="customLogo" style="height:24px;width:auto;object-fit:contain" alt="Logo"/></template>
+        <template x-if="!customLogo"><svg width="16" height="14" viewBox="0 0 30 26" fill="none"><path d="M0 18L6 10L12 18L6 22Z" fill="#C9A84C"/><path d="M9 12L15 4L21 12L15 16Z" fill="#e8c96a"/><path d="M18 18L24 10L30 18L24 22Z" fill="#d4a843"/></svg></template>
+        <div style="font-size:17px;font-weight:800;color:#0a0a0a;letter-spacing:-.4px">SWL</div>
+      </div>
+      <div style="font-size:10px;color:#999;margin-bottom:5px">swlconsulting.com · Empowering Others To Achieve Their Full Potential</div>
+      <div style="display:inline-flex;align-items:center;gap:5px;background:#fdf8ee;border:1px solid #C9A84C55;border-radius:99px;padding:3px 10px;font-size:10px;font-weight:600;color:#9a7a2e;margin-bottom:13px">🤖 <span x-text="t('pdfBadge')"></span></div>
+      <div style="height:2px;background:linear-gradient(90deg,#C9A84C,#e8c96a,transparent);margin-bottom:13px"></div>
+      <!-- Meta -->
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:13px">
+        <div>
+          <div style="font-size:18px;font-weight:800;color:#0a0a0a;letter-spacing:-.4px" x-text="pdfMeta.clientName||previewQ.name||t('quoteTitle')"></div>
+          <div style="font-size:10px;color:#888;margin-top:2px"><span x-show="pdfMeta.contactName" x-text="t('attTo')+': '+pdfMeta.contactName+' · '"></span><span x-text="t('pdfSubtitle')"></span></div>
+        </div>
+        <div style="text-align:right;background:#f5f5f5;border-radius:7px;padding:6px 10px">
+          <div style="font-size:9px;text-transform:uppercase;letter-spacing:.7px;color:#999;margin-bottom:1px" x-text="t('date')"></div>
+          <div style="font-size:11px;font-weight:600" x-text="today()"></div>
+        </div>
+      </div>
+      <template x-if="pdfMeta.intro"><div style="background:#fdf8ee;border:1px solid #C9A84C44;border-radius:8px;padding:9px 12px;margin-bottom:11px"><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#9a7a2e;margin-bottom:3px" x-text="t('executiveSummary')"></div><div style="font-size:11px;color:#3a3020;line-height:1.65" x-text="pdfMeta.intro"></div></div></template>
+      <template x-if="pdfMeta.priorities"><div style="background:#f5f5f5;border:1px solid #d4d4d4;border-radius:8px;padding:9px 12px;margin-bottom:11px"><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#555;margin-bottom:3px" x-text="t('engagementPriorities')"></div><div style="font-size:11px;color:#555;line-height:1.65" x-text="pdfMeta.priorities"></div></div></template>
+      <!-- Section A -->
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;margin-bottom:5px;display:flex;align-items:center;gap:8px;padding:6px 9px;border-radius:6px;background:#fdf8ee;color:#9a7a2e;border:1px solid #C9A84C33">📐 <span x-text="t('sectionSetup')"></span></div>
+      <template x-for="platName in previewPlatforms()" :key="'s-'+platName">
+        <div>
+          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#888;margin:5px 0 3px 2px" x-text="platName"></div>
+          <table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:3px">
+            <thead><tr><th style="text-align:left;padding:4px 6px;background:#f8f8f8;font-weight:600;color:#666;font-size:10px;border-bottom:1px solid #eee;width:42%">Agent</th><th style="text-align:left;padding:4px 6px;background:#f8f8f8;font-weight:600;color:#666;font-size:10px;border-bottom:1px solid #eee;width:7%">T</th><th style="text-align:left;padding:4px 6px;background:#f8f8f8;font-weight:600;color:#666;font-size:10px;border-bottom:1px solid #eee">Setup Min</th><th style="text-align:left;padding:4px 6px;background:#f8f8f8;font-weight:600;color:#666;font-size:10px;border-bottom:1px solid #eee">Setup Max</th></tr></thead>
+            <tbody>
+              <template x-for="item in previewByPlatform(platName)" :key="item.name+'s'">
+                <tr><td style="padding:4px 6px;border-bottom:1px solid #f2f2f2;font-weight:600;color:#0a0a0a" x-text="item.name"></td><td style="padding:4px 6px;border-bottom:1px solid #f2f2f2"><span style="display:inline-block;padding:1px 5px;border-radius:99px;font-size:9px;font-weight:700" :style="item.tier===1?'background:#dcfce7;color:#166534':item.tier===2?'background:#fef9c3;color:#854d0e':'background:#fee2e2;color:#991b1b'" x-text="'T'+item.tier"></span></td><td style="padding:4px 6px;border-bottom:1px solid #f2f2f2;font-family:monospace;font-size:10px;color:#333" x-text="'$'+fmtN(item.setupLow||0)"></td><td style="padding:4px 6px;border-bottom:1px solid #f2f2f2;font-family:monospace;font-size:10px;color:#333" x-text="'$'+fmtN(item.setupHigh||0)"></td></tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </template>
+      <div style="display:flex;justify-content:flex-end;gap:14px;padding:4px 6px;background:#fdf8ee;border:1px solid #C9A84C22;border-radius:4px;margin-bottom:9px;font-size:11px"><span style="color:#888" x-text="t('totalSetup')+':'"></span><strong style="font-family:monospace;color:#9a7a2e" x-text="'$'+fmtN(previewQ.agents.reduce((s,a)=>s+(a.setupLow||0),0))+' – $'+fmtN(previewQ.agents.reduce((s,a)=>s+(a.setupHigh||0),0))"></strong></div>
+      <!-- Section B -->
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;margin-bottom:5px;margin-top:7px;display:flex;align-items:center;gap:8px;padding:6px 9px;border-radius:6px;background:#f5f5f5;color:#333;border:1px solid #ddd">🔁 <span x-text="t('sectionRetainer')"></span></div>
+      <template x-for="platName in previewPlatforms()" :key="'r-'+platName">
+        <div>
+          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#888;margin:5px 0 3px 2px" x-text="platName"></div>
+          <table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:3px">
+            <thead><tr><th style="text-align:left;padding:4px 6px;background:#f8f8f8;font-weight:600;color:#666;font-size:10px;border-bottom:1px solid #eee;width:50%">Agent</th><th style="text-align:left;padding:4px 6px;background:#f8f8f8;font-weight:600;color:#666;font-size:10px;border-bottom:1px solid #eee;width:7%">T</th><th style="text-align:left;padding:4px 6px;background:#f8f8f8;font-weight:600;color:#666;font-size:10px;border-bottom:1px solid #eee">Monthly Retainer</th></tr></thead>
+            <tbody>
+              <template x-for="item in previewByPlatform(platName)" :key="item.name+'r'">
+                <tr><td style="padding:4px 6px;border-bottom:1px solid #f2f2f2;font-weight:600;color:#0a0a0a" x-text="item.name"></td><td style="padding:4px 6px;border-bottom:1px solid #f2f2f2"><span style="display:inline-block;padding:1px 5px;border-radius:99px;font-size:9px;font-weight:700" :style="item.tier===1?'background:#dcfce7;color:#166534':item.tier===2?'background:#fef9c3;color:#854d0e':'background:#fee2e2;color:#991b1b'" x-text="'T'+item.tier"></span></td><td style="padding:4px 6px;border-bottom:1px solid #f2f2f2;font-size:10px;color:#444" x-text="computedRetainerStr(item)"></td></tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </template>
+      <!-- Totals -->
+      <div style="background:#0a0a0a;color:#fff;border-radius:8px;padding:11px 13px;margin-top:4px">
+        <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px;color:#888"><span x-text="t('totalAgents')"></span><span style="color:#fff;font-family:monospace;font-weight:600" x-text="previewQ.agents.length"></span></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px;color:#888"><span x-text="t('setupRange')"></span><span style="color:#fff;font-family:monospace;font-weight:600" x-text="'$'+fmtN(previewQ.agents.reduce((s,a)=>s+(a.setupLow||0),0))+' – $'+fmtN(previewQ.agents.reduce((s,a)=>s+(a.setupHigh||0),0))"></span></div>
+        <template x-if="totalDiscount()>0"><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px;color:#888"><span x-text="'🏷️ '+t('discountApplied')"></span><span style="color:#22c55e;font-family:monospace;font-weight:600" x-text="'-$'+fmtN(totalDiscount())+'/mo'"></span></div></template>
+        <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-top:6px;padding-top:6px;border-top:1px solid #2a2a2a"><span style="color:#fff" x-text="t('estRetainer')"></span><span style="color:#C9A84C;font-family:monospace;font-size:14px" x-text="'$'+fmtN(retainerTotal())+' / mo'"></span></div>
+      </div>
+      <!-- ROI -->
+      <div style="margin-top:11px;background:#fdf8ee;border:1px solid #C9A84C55;border-radius:8px;padding:9px 11px">
+        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#9a7a2e;margin-bottom:6px" x-text="t('roiTitle')"></div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px">
+          <div style="text-align:center;background:#fff;border:1px solid #C9A84C33;border-radius:6px;padding:6px 4px"><div style="font-size:16px;font-weight:900;color:#C9A84C;letter-spacing:-.5px" x-text="calcROI(previewQ.agents).hours+'h'"></div><div style="font-size:9px;color:#888;margin-top:2px" x-text="t('roiHours')"></div></div>
+          <div style="text-align:center;background:#fff;border:1px solid #C9A84C33;border-radius:6px;padding:6px 4px"><div style="font-size:16px;font-weight:900;color:#C9A84C;letter-spacing:-.5px" x-text="calcROI(previewQ.agents).roi+'x'"></div><div style="font-size:9px;color:#888;margin-top:2px" x-text="t('roiAvg')"></div></div>
+          <div style="text-align:center;background:#fff;border:1px solid #C9A84C33;border-radius:6px;padding:6px 4px"><div style="font-size:16px;font-weight:900;color:#C9A84C;letter-spacing:-.5px" x-text="calcROI(previewQ.agents).payback+' mo'"></div><div style="font-size:9px;color:#888;margin-top:2px" x-text="t('roiPayback')"></div></div>
+        </div>
+      </div>
+      <!-- Conditions -->
+      <div style="margin-top:9px;background:#f9f9f9;border:1px solid #e5e5e5;border-radius:8px;padding:9px 11px"><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#333;margin-bottom:4px" x-text="t('commercialConditions')"></div><div style="font-size:10px;color:#555;line-height:1.8" x-html="pdfMeta.conditions.replace(/\n/g,'<br>')"></div></div>
+      <div style="margin-top:7px;background:#0a0a0a;border-radius:8px;padding:9px 11px"><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#C9A84C;margin-bottom:4px" x-text="t('nextStepsTitle')"></div><div style="font-size:10px;color:#ccc;line-height:1.8" x-html="pdfMeta.nextSteps.replace(/\n/g,'<br>')"></div></div>
+      <div style="margin-top:11px;padding-top:6px;border-top:1px solid #eee;display:flex;justify-content:space-between;font-size:9px;color:#aaa"><span>SWL Consulting · www.swlconsulting.com</span><span>juan@swlconsulting.com · luciano@swlconsulting.com</span><span x-text="today()"></span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const I18N={
+en:{
+  headerSub:'AI Agent Quoter · 13 Platforms · USD',badge:'Agent Quoter 2026',
+  home:'Home',buildQuote:'Build Quote',projects:'Projects',compare:'Compare',discounts:'Discounts',agentSetup:'Agent Setup',media:'Media',
+  heroEyebrow:'AI-Native Solutions Portfolio 2026',heroH1a:'Turn AI into a',heroH1b:'Revenue Machine',
+  heroP:'SWL delivers 13 integrated AI platforms and production-ready agents — from intelligent sales automation to full organizational AI command.',
+  buildQuoteBtn:'🧩 Build a Quote',configureBtn:'⚙️ Configure Agents',
+  statAgents:'Production-Ready Agents',statAgentsSub:'Across 13 platforms',statHours:'Hours Saved / Month',statHoursSub:'Per full deployment',statROI:'Average ROI',statROISub:'Within 6 months',statQuotes:'Saved Quotes',noProjects:'No projects yet',viewArrow:'View →',
+  platformPortfolio:'AI Platform Portfolio',platformSub:'Click any platform to explore details and build a quote',viewAll:'View all agents →',
+  agents:'agents',setupFrom:'Setup from',
+  whyTitle:'Why SWL AI — Not Generic Automation',
+  why1t:'Execution, Not Advisory',why1d:'Every engagement ends with deployed agents, live automations, and measurable KPIs — not slide decks.',
+  why2t:'Integrated Systems, Not Isolated Tools',why2d:'Agents hand off to each other. Data flows between systems. The organization compounds intelligence over time.',
+  why3t:'Business Impact First',why3d:'Every agent is designed around a business outcome — revenue, margin, churn, conversion.',
+  platforms:'Platforms',searchAgent:'Search agent...',allTiers:'All Tiers',agentsClick:'agents — click to add',
+  lightDeployment:'Light Deployment',fullDeployment:'Full Deployment',addons:'Add-ons',
+  selectAll:'Select all',deselectAll:'Deselect all',
+  quoteBuilder:'Quote Builder',agentsSelected:'agents selected',projectName:'Project name...',quoteEmpty:'Click agents to add them',noMatch:'No agents match filter.',
+  setup:'Setup',retainer:'Retainer',discount:'discount',discountApplied:'Bundle discount',
+  setupLow:'Setup low',setupHigh:'Setup high',monthlyRetainer:'Monthly retainer',
+  previewPDF:'📄 Preview & Export PDF',saveProject:'💾 Save Project',exportCSV:'Export CSV',clearQuote:'Clear quote',
+  savedProjects:'Saved Projects',projectsSaved:'projects saved',clearAll:'🗑 Clear All',
+  noProjectsYet:'No saved projects yet',noProjectsHint:'Build a quote and save it here.',
+  unnamedProject:'Unnamed Project',active:'Active',saved:'Saved',more:'more',load:'Load',versionHistory:'Version History',
+  compareTitle:'Scenario Comparator',compareSub:'Compare two saved projects side by side',
+  scenarioA:'Scenario A',scenarioB:'Scenario B',selectProject:'Select project...',useCurrent:'Use current',compareEmpty:'Select a project',comparisonSummary:'Comparison Summary',exportComparePDF:'Export Comparison PDF',
+  roiHours:'Hours saved/mo',roiAvg:'Avg ROI',roiPayback:'Payback period',
+  discountsTitle:'Discounts & Packages',discountsSub:'Configure bundle discounts per platform and commercial package pricing.',
+  bundleDiscounts:'Bundle Discounts',bundleDiscountsHint:'(per platform)',lightDiscDesc:'Discount applied when all agents of that tier are selected on this platform.',
+  packages:'Commercial Packages',packagesHint:'(editable)',
+  pkgName:'Package Name',pkgObjective:'Objective',pkgScope:'Scope',pkgTimeline:'Timeline',pkgInvestment:'Investment',pkgValue:'Value Delivered',pkgDiscount:'Package Discount',offRetainer:'off retainer',
+  setupTitle:'Agent Setup — Edit All Variables',setupSub:'Changes sync instantly · Auto-saved',
+  search:'Search...',allPlatforms:'All Platforms',resetAll:'↺ Reset All',
+  platform:'Platform',agentName:'Agent Name',note:'Note',setupPrice:'Setup Price',baseRetainer:'Base Retainer',varConfig:'Variable Config',fixedOnly:'Fixed only',
+  mediaBranding:'Media & Branding',mediaSub:'Customize logo, platform images and descriptions.',logoHint:'(header + PDF)',
+  uploadLogo:'Upload custom logo',chooseFile:'📁 Choose file',logoUrlPlaceholder:'Or paste logo URL...',
+  apply:'Apply',reset:'↺ Reset',platformImages:'Platform Images & Descriptions',platformImagesHint:'(editable)',changeImage:'📁 Change',pasteImageUrl:'Image URL...',upload:'📁 Upload',editDesc:'Edit description...',
+  customizeQuote:'Customize Quote',customizeSub:'Fill in details before generating the PDF',
+  clientInfo:'Client Information',clientName:'Client / Company Name',clientNamePH:'e.g. Acme Corp',
+  contactName:'Contact Name',contactNamePH:'e.g. John Smith, CEO',
+  introContext:'Context & Introduction',introLabel:'Executive Summary',introPH:'Describe the context of this proposal...',
+  prioritiesLabel:'Engagement Priorities',prioritiesPH:'e.g. Accelerate sales, reduce costs...',
+  commercialTerms:'Commercial Terms',conditionsLabel:'Commercial Conditions',nextStepsLabel:'Next Steps',
+  generatePDF:'🖨️ Generate PDF',cancel:'Cancel',
+  quotePreview:'Quote Preview',printPDF:'Print / Save as PDF',close:'Close',
+  pdfBadge:'AI Solutions Portfolio',quoteTitle:'AI Solution Quote',attTo:'Att.',pdfSubtitle:'AI Transformation Proposal · Prepared by SWL Consulting',
+  date:'Date',executiveSummary:'EXECUTIVE SUMMARY',engagementPriorities:'ENGAGEMENT PRIORITIES',
+  sectionSetup:'SECTION A — ONE-TIME SETUP FEES',sectionRetainer:'SECTION B — MONTHLY RETAINER',
+  totalSetup:'Total Setup',totalAgents:'Total agents',setupRange:'Setup range',estRetainer:'Estimated monthly retainer',
+  roiTitle:'ESTIMATED ROI',commercialConditions:'COMMERCIAL CONDITIONS',nextStepsTitle:'NEXT STEPS',
+  implTime:'Impl. Time',retainerFrom:'Retainer from',
+},
+es:{
+  headerSub:'AI Agent Quoter · 13 Plataformas · USD',badge:'Agent Quoter 2026',
+  home:'Inicio',buildQuote:'Armar Cotización',projects:'Proyectos',compare:'Comparar',discounts:'Descuentos',agentSetup:'Configuración',media:'Medios',
+  heroEyebrow:'Portfolio de Soluciones AI 2026',heroH1a:'Convertí la IA en una',heroH1b:'Máquina de Ingresos',
+  heroP:'SWL entrega 13 plataformas de AI integradas y agentes listos para producción — desde automatización de ventas hasta comando organizacional completo.',
+  buildQuoteBtn:'🧩 Armar Cotización',configureBtn:'⚙️ Configurar Agentes',
+  statAgents:'Agentes Listos',statAgentsSub:'En 13 plataformas',statHours:'Horas Ahorradas/Mes',statHoursSub:'Por despliegue completo',statROI:'ROI Promedio',statROISub:'En 6 meses',statQuotes:'Cotizaciones Guardadas',noProjects:'Sin proyectos aún',viewArrow:'Ver →',
+  platformPortfolio:'Portfolio de Plataformas AI',platformSub:'Click en cualquier plataforma para explorar detalles',viewAll:'Ver todos los agentes →',
+  agents:'agentes',setupFrom:'Setup desde',
+  whyTitle:'Por qué SWL — No Automatización Genérica',
+  why1t:'Ejecución, No Consultoría',why1d:'Todo engagement termina con agentes desplegados y KPIs medibles.',
+  why2t:'Sistemas Integrados',why2d:'Los agentes se pasan datos entre sí. La organización acumula inteligencia con el tiempo.',
+  why3t:'Impacto de Negocio Primero',why3d:'Cada agente está diseñado alrededor de un resultado: revenue, margen, churn, conversión.',
+  platforms:'Plataformas',searchAgent:'Buscar agente...',allTiers:'Todos los Tiers',agentsClick:'agentes — click para agregar',
+  lightDeployment:'Despliegue Básico',fullDeployment:'Despliegue Completo',addons:'Add-ons',
+  selectAll:'Seleccionar todos',deselectAll:'Deseleccionar todos',
+  quoteBuilder:'Cotizador',agentsSelected:'agentes seleccionados',projectName:'Nombre del proyecto...',quoteEmpty:'Click en los agentes para agregarlos',noMatch:'Ningún agente coincide.',
+  setup:'Setup',retainer:'Retainer',discount:'descuento',discountApplied:'Descuento bundle',
+  setupLow:'Setup mínimo',setupHigh:'Setup máximo',monthlyRetainer:'Retainer mensual',
+  previewPDF:'📄 Preview y Exportar PDF',saveProject:'💾 Guardar Proyecto',exportCSV:'Exportar CSV',clearQuote:'Limpiar cotización',
+  savedProjects:'Proyectos Guardados',projectsSaved:'proyectos guardados',clearAll:'🗑 Borrar Todo',
+  noProjectsYet:'No hay proyectos guardados',noProjectsHint:'Armá una cotización y guardala acá.',
+  unnamedProject:'Proyecto Sin Nombre',active:'Activo',saved:'Guardado',more:'más',load:'Cargar',versionHistory:'Historial de Versiones',
+  compareTitle:'Comparador de Escenarios',compareSub:'Comparar dos proyectos guardados',
+  scenarioA:'Escenario A',scenarioB:'Escenario B',selectProject:'Seleccionar proyecto...',useCurrent:'Usar actual',compareEmpty:'Seleccioná un proyecto',comparisonSummary:'Resumen Comparativo',exportComparePDF:'Exportar PDF Comparativo',
+  roiHours:'Horas ahorradas/mes',roiAvg:'ROI Promedio',roiPayback:'Período de recupero',
+  discountsTitle:'Descuentos y Paquetes',discountsSub:'Configurá descuentos por bundle por plataforma y precios de paquetes comerciales.',
+  bundleDiscounts:'Descuentos Bundle',bundleDiscountsHint:'(por plataforma)',lightDiscDesc:'Descuento aplicado cuando se seleccionan todos los agentes de ese tier en esta plataforma.',
+  packages:'Paquetes Comerciales',packagesHint:'(editables)',
+  pkgName:'Nombre del Paquete',pkgObjective:'Objetivo',pkgScope:'Alcance',pkgTimeline:'Cronograma',pkgInvestment:'Inversión',pkgValue:'Valor Entregado',pkgDiscount:'Descuento del Paquete',offRetainer:'de descuento en retainer',
+  setupTitle:'Configuración de Agentes',setupSub:'Cambios sincronizan al instante · Guardado automático',
+  search:'Buscar...',allPlatforms:'Todas las Plataformas',resetAll:'↺ Resetear Todo',
+  platform:'Plataforma',agentName:'Nombre del Agente',note:'Nota',setupPrice:'Precio Setup',baseRetainer:'Retainer Base',varConfig:'Config. Variable',fixedOnly:'Solo fijo',
+  mediaBranding:'Medios y Marca',mediaSub:'Personalizá logo, imágenes y descripciones de plataformas.',logoHint:'(header + PDF)',
+  uploadLogo:'Subir logo personalizado',chooseFile:'📁 Elegir archivo',logoUrlPlaceholder:'O pegá URL del logo...',
+  apply:'Aplicar',reset:'↺ Resetear',platformImages:'Imágenes y Descripciones',platformImagesHint:'(editables)',changeImage:'📁 Cambiar',pasteImageUrl:'URL de imagen...',upload:'📁 Subir',editDesc:'Editar descripción...',
+  customizeQuote:'Personalizar Cotización',customizeSub:'Completá los datos antes de generar el PDF',
+  clientInfo:'Información del Cliente',clientName:'Cliente / Empresa',clientNamePH:'ej: Acme Corp',
+  contactName:'Nombre del Contacto',contactNamePH:'ej: Juan García, CEO',
+  introContext:'Contexto e Introducción',introLabel:'Resumen Ejecutivo',introPH:'Describí el contexto de esta propuesta...',
+  prioritiesLabel:'Prioridades del Engagement',prioritiesPH:'ej: Acelerar ventas, reducir costos...',
+  commercialTerms:'Condiciones Comerciales',conditionsLabel:'Condiciones Comerciales',nextStepsLabel:'Próximos Pasos',
+  generatePDF:'🖨️ Generar PDF',cancel:'Cancelar',
+  quotePreview:'Preview de Cotización',printPDF:'Imprimir / Guardar como PDF',close:'Cerrar',
+  pdfBadge:'Portfolio de Soluciones AI',quoteTitle:'Cotización AI',attTo:'A/A',pdfSubtitle:'Propuesta de Transformación AI · Preparado por SWL Consulting',
+  date:'Fecha',executiveSummary:'RESUMEN EJECUTIVO',engagementPriorities:'PRIORIDADES',
+  sectionSetup:'SECCIÓN A — SETUP FEES (PAGO ÚNICO)',sectionRetainer:'SECCIÓN B — RETAINER MENSUAL',
+  totalSetup:'Total Setup',totalAgents:'Total agentes',setupRange:'Rango de setup',estRetainer:'Retainer mensual estimado',
+  roiTitle:'ROI ESTIMADO',commercialConditions:'CONDICIONES COMERCIALES',nextStepsTitle:'PRÓXIMOS PASOS',
+  implTime:'Impl.',retainerFrom:'Retainer desde',
+}};
+
+const DC_EN=`● Monthly billing at the start of each phase\n● Payment methods: International wire transfer\n● Start: Immediate upon approval of this Statement of Work`;
+const DC_ES=`● Facturación mensual al inicio de cada fase\n● Métodos de pago: Transferencia internacional\n● Inicio: Inmediato tras la aprobación de este Statement of Work`;
+const NS_EN=`1. Formal Statement of Work confirmation by email\n2. Invoice issuance\n3. 50% payment\n4. Strategic alignment meeting\n5. Designation of contact points and responsible team\n6. Receipt of preliminary information\n7. Project kick-off`;
+const NS_ES=`1. Confirmación del Statement of Work formal por mail.\n2. Emisión de Invoice\n3. Pago del 50%\n4. Reunión de alineación estratégica\n5. Designación de puntos de contacto y equipo responsable\n6. Recepción de información preliminar\n7. Kick-off del proyecto`;
+
+const AGENT_ROI={'LeadMiner':{h:120,val:18000},'ICP Scorer':{h:40,val:6000},'MessageTailor':{h:30,val:4500},'OutreachFlow':{h:80,val:12000},'Smart Nurture':{h:25,val:4000},'SmartSDR':{h:120,val:20000},'PipelinePilot':{h:50,val:8000},'DealCloser AI':{h:60,val:12000},'Meeting IQ':{h:35,val:5000},'Pricing Copilot':{h:20,val:4000},'Lead Recovery Bot':{h:15,val:2500},'CrossSell Predictor':{h:25,val:5000},'Quota Guardian':{h:20,val:3500},'ReferralBooster':{h:10,val:2000},'ContentBuilder':{h:60,val:9000},'AudienceSense':{h:30,val:5000},'AdOptimizer RTX':{h:40,val:8000},'AutoPublisher':{h:25,val:3500},'Automated Blog':{h:20,val:3000},'Automated AI Content Gen for Social Media':{h:30,val:4500},'TrendRadar':{h:20,val:3500},'SEO & Topic Mapper':{h:25,val:4000},'CampaignMaestro':{h:50,val:9000},'BrandSentinel':{h:15,val:2500},'ROI Optimizer AI':{h:20,val:5000},'Social Pulse Tracker':{h:15,val:2500},'BrandVoice Optimizer':{h:10,val:1500},'CreativeBrain':{h:30,val:5000},'InfluencerMatch':{h:20,val:4000},'ContentDNA':{h:15,val:2000},'SmartForecast / Forecast Builder X':{h:50,val:10000},'ExpenseRadar':{h:30,val:5000},'AI FinancialGuru':{h:25,val:4500},'SmartReconciler':{h:40,val:7000},'CashFlow Sentinel':{h:30,val:6000},'Valuation Copilot':{h:25,val:6000},'InvoiceProcessor':{h:40,val:6000},'BookkeepingBot':{h:60,val:9000},'PayrollAutomator':{h:35,val:6000},'ContractVault':{h:25,val:4500},'ComplianceAuditor':{h:30,val:6000},'DocBuilder AI':{h:20,val:3000},'Audit Trail Keeper':{h:10,val:1500},'TaskAutomator':{h:60,val:9000},'TicketRouter':{h:30,val:4500},'Logistics Route Optimizer':{h:40,val:8000},'Procurement AI Scout':{h:35,val:6000},'S&OP Copilot':{h:45,val:9000},'Ops Efficiency Monitor':{h:25,val:4500},'FlowBuilder AI':{h:20,val:3000},'SyncCorp':{h:90,val:15000},'PredictiveAdvisor':{h:50,val:9000},'FlowDirector':{h:35,val:6000},'DocMind':{h:30,val:5000},'InsightHub 360':{h:40,val:7000},'Anomaly Radar':{h:25,val:5000},'AutoReport AI':{h:30,val:5000},'KPI Architect':{h:20,val:3500},'Data Hygiene Doctor':{h:25,val:4000},'RootCause Analyzer':{h:30,val:5500},'AugmentedReporter':{h:20,val:3500},'DemandPredictor':{h:50,val:10000},'StockOptimizer':{h:40,val:9000},'Inventory Predictor':{h:30,val:6000},'ProcureBot':{h:35,val:7000},'CompetitorScout':{h:25,val:5000},'Demand Sensing AI':{h:40,val:8000},'HireSense':{h:50,val:8000},'TalentMatch AI':{h:40,val:6500},'OnboardFlow':{h:25,val:4000},'TimeTracker AI':{h:20,val:3500},'PerformanceController':{h:30,val:5000},'Performance Reviewer Bot':{h:20,val:3000},'MoodPulse':{h:15,val:3000},'SkillMap Architect':{h:20,val:3500},'ChatFlowAI':{h:60,val:10000},'SentimentSense':{h:25,val:4500},'ChurnPredictor CX':{h:40,val:9000},'Support Copilot 24/7':{h:50,val:8000},'Voice of Customer Lens':{h:20,val:4000},'LoyaltyArchitect':{h:25,val:5000},'EngageFlow':{h:30,val:5500},'Retention Sentinel':{h:35,val:7000},'Customer Value Maximizer':{h:25,val:5500},'Complaint Resolver AI':{h:20,val:3000},'SmartCSAT':{h:15,val:2500},'Price Intelligence Agent':{h:30,val:6000},'Product Launch Tracker':{h:20,val:4000},'Digital Market Share Monitor':{h:20,val:4000},'Signal Intelligence Engine':{h:25,val:5500},'Sentiment Analyzer':{h:20,val:3500},'Supply Chain CI':{h:30,val:6000},'Demand Intelligence Agent':{h:25,val:5000},'Regulatory Intelligence Bot':{h:20,val:4000},'ContractScan':{h:40,val:7000},'Contract Reviewer AI':{h:35,val:6500},'ComplianceAuditor (Legal)':{h:30,val:6000},'DocBuilder AI (Legal)':{h:20,val:3000},'Policy Compliance Bot':{h:25,val:5000},'Ethical Guardrails Engine':{h:15,val:3500},'Audit Trail Keeper (Legal)':{h:10,val:1500},'UX Optimizer AI':{h:30,val:6000},'Checkout Optimizer':{h:20,val:5000},'Dynamic Pricing Agent':{h:25,val:6000},'Product Recommender AI':{h:20,val:5000},'SEO Intelligence Layer':{h:25,val:4500},'Customer LTV Forecaster':{h:20,val:4500},'DataMapper Studio':{h:25,val:4500},'AgentOrchestrator':{h:30,val:8000},'PerformanceMonitor':{h:20,val:4000},'AgentOpsControl':{h:20,val:4000},'MCP Gateway Enterprise':{h:15,val:4500},'Cyber Risk Sentinel':{h:20,val:6000},'Error Monitor & Auto-Heal':{h:15,val:3500},'Identity & Access AI Manager':{h:15,val:3500},'Virtual Executive Assistant':{h:40,val:6000}};
+
+const DEFAULT_IMGS={growth:'https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&q=75',marketing:'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=600&q=75',finance:'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&q=75',opsback:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=75',opsflow:'https://images.unsplash.com/photo-1518186285589-2f7649de83e0?w=600&q=75',datasense:'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=75',smartops:'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=600&q=75',talent:'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=600&q=75',customer:'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&q=75',competitor:'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=75',legal:'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=600&q=75',digital:'https://images.unsplash.com/photo-1547658719-da2b51169166?w=600&q=75',command:'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&q=75'};
+
+function mka(o){return Object.assign({varValue:o.varDefault||o.varMin||0},o);}
+
+function buildPlatforms(){
+  // tier: 1=Light, 2=Full, 3=Add-on
+  const D=[
+    {id:'growth',name:'GrowthEngine™',desc:{en:'Automates the entire revenue cycle — from prospect identification to pipeline management.',es:'Automatiza todo el ciclo de revenue — desde identificación de prospectos hasta gestión del pipeline.'},impact:'5× qualified lead volume · +120 hrs saved/SDR/mo',setupRange:'from $2,500',implLight:'3–5 wks',implFull:'8–12 wks',
+     agents:[
+      mka({name:'LeadMiner',tier:1,setup:'$5,000–7,500',setupLow:5000,setupHigh:7500,retainerBase:'$2,500',retainerNum:2500,retainerShort:'$2,500/mo + $5/lead >500',varLabel:'Leads/mo',varMin:500,varRate:5,varDefault:500,varUnit:'leads',note:{en:'Variable tied to lead volume',es:'Variable según volumen de leads'}}),
+      mka({name:'ICP Scorer',tier:1,setup:'$5,000–7,500',setupLow:5000,setupHigh:7500,retainerBase:'$1,500',retainerNum:1500,retainerShort:'$1,500/mo fixed',note:{en:'Fixed base; model retraining quarterly',es:'Base fija; reentrenamiento trimestral'}}),
+      mka({name:'MessageTailor',tier:1,setup:'$2,500–4,000',setupLow:2500,setupHigh:4000,retainerBase:'$1,000',retainerNum:1000,retainerShort:'$1,000/mo fixed',note:{en:'Prompt-based; low infra complexity',es:'Basado en prompts; baja complejidad'}}),
+      mka({name:'OutreachFlow',tier:1,setup:'$6,000–9,000',setupLow:6000,setupHigh:9000,retainerBase:'$2,000',retainerNum:2000,retainerShort:'$2,000/mo + $3/seq >1,000',varLabel:'Sequences/mo',varMin:1000,varRate:3,varDefault:1000,varUnit:'seq',note:{en:'Multichannel; variable on sequence volume',es:'Multicanal; variable según volumen'}}),
+      mka({name:'Smart Nurture',tier:1,setup:'$3,000–5,000',setupLow:3000,setupHigh:5000,retainerBase:'$1,200',retainerNum:1200,retainerShort:'$1,200/mo fixed',note:{en:'Triggered workflows; moderate complexity',es:'Workflows disparados; complejidad moderada'}}),
+      mka({name:'SmartSDR',tier:2,setup:'$10,000–15,000',setupLow:10000,setupHigh:15000,retainerBase:'$3,500',retainerNum:3500,retainerShort:'$3,500/mo fixed',note:{en:'24/7 agent across multiple platforms + CRM sync',es:'Agente 24/7 en múltiples plataformas + CRM'}}),
+      mka({name:'PipelinePilot',tier:2,setup:'$6,000–9,000',setupLow:6000,setupHigh:9000,retainerBase:'$2,000',retainerNum:2000,retainerShort:'$2,000/mo fixed',note:{en:'Requires CRM historical data',es:'Requiere datos históricos del CRM'}}),
+      mka({name:'DealCloser AI',tier:2,setup:'$12,000–18,000',setupLow:12000,setupHigh:18000,retainerBase:'$3,500',retainerNum:3500,retainerShort:'$3,500/mo fixed',note:{en:'Real-time call analysis; high complexity',es:'Análisis de llamadas en tiempo real'}}),
+      mka({name:'Meeting IQ',tier:2,setup:'$5,000–8,000',setupLow:5000,setupHigh:8000,retainerBase:'$1,800',retainerNum:1800,retainerShort:'$1,800/mo fixed',note:{en:'Transcription + intent extraction',es:'Transcripción + extracción de intención'}}),
+      mka({name:'Lead Recovery Bot',tier:2,setup:'$2,500–4,000',setupLow:2500,setupHigh:4000,retainerBase:'$1,000',retainerNum:1000,retainerShort:'$1,000/mo fixed',note:{en:'Triggered re-engagement workflow',es:'Re-engagement disparado'}}),
+      mka({name:'CrossSell Predictor',tier:2,setup:'$6,000–9,000',setupLow:6000,setupHigh:9000,retainerBase:'$1,800',retainerNum:1800,retainerShort:'$1,800/mo fixed',note:{en:'Requires transaction history data layer',es:'Requiere historial de transacciones'}}),
+      mka({name:'Pricing Copilot',tier:3,setup:'$6,000–9,000',setupLow:6000,setupHigh:9000,retainerBase:'$2,000',retainerNum:2000,retainerShort:'$2,000/mo + $500/market',varLabel:'Markets',varMin:1,varRate:500,varDefault:1,varUnit:'markets',note:{en:'Variable per additional market',es:'Variable por mercado adicional'}}),
+      mka({name:'Quota Guardian',tier:3,setup:'$5,000–8,000',setupLow:5000,setupHigh:8000,retainerBase:'$1,500',retainerNum:1500,retainerShort:'$1,500/mo fixed',note:{en:'Performance monitoring + forecast model',es:'Monitoreo de rendimiento + forecast'}}),
+      mka({name:'ReferralBooster',tier:3,setup:'$2,500–4,000',setupLow:2500,setupHigh:4000,retainerBase:'$900',retainerNum:900,retainerShort:'$900/mo fixed',note:{en:'Sentiment-based selection; low complexity',es:'Selección por sentimiento; baja complejidad'}}),
+    ]},
+    {id:'marketing',name:'MarketingPilot™',desc:{en:'Generates, optimizes, and publishes marketing content and campaigns autonomously across all channels.',es:'Genera, optimiza y publica contenido y campañas de forma autónoma en todos los canales.'},impact:'80–90% reduction in content creation time',setupRange:'from $2,500',implLight:'2–4 wks',implFull:'6–9 wks',
+     agents:[
+      mka({name:'ContentBuilder',tier:1,setup:'$5,000–8,000',setupLow:5000,setupHigh:8000,retainerBase:'$1,800',retainerNum:1800,retainerShort:'$1,800/mo fixed',note:{en:'Brand voice training + multi-format output',es:'Entrenamiento de voz de marca + multi-formato'}}),
+      mka({name:'AutoPublisher',tier:1,setup:'$3,000–5,000',setupLow:3000,setupHigh:5000,retainerBase:'$1,000',retainerNum:1000,retainerShort:'$1,000/mo fixed',note:{en:'Scheduling automation; standard integrations',es:'Automatización de programación; integraciones estándar'}}),
+      mka({name:'Automated Blog',tier:1,setup:'$2,500–4,000',setupLow:2500,setupHigh:4000,retainerBase:'$900',retainerNum:900,retainerShort:'$900/mo fixed',note:{en:'Weekly AI-generated articles; prompt-based',es:'Artículos semanales generados por AI'}}),
+      mka({name:'BrandSentinel',tier:1,setup:'$3,000–5,000',setupLow:3000,setupHigh:5000,retainerBase:'$1,200',retainerNum:1200,retainerShort:'$1,200/mo fixed',note:{en:'Monitoring setup; standard NLP pipeline',es:'Setup de monitoreo; pipeline NLP estándar'}}),
+      mka({name:'Social Pulse Tracker',tier:1,setup:'$3,000–5,000',setupLow:3000,setupHigh:5000,retainerBase:'$1,000',retainerNum:1000,retainerShort:'$1,000/mo fixed',note:{en:'Social API integrations + sentiment scoring',es:'Integraciones API social + puntuación sentimiento'}}),
+      mka({name:'AudienceSense',tier:2,setup:'$6,000–9,000',setupLow:6000,setupHigh:9000,retainerBase:'$2,000',retainerNum:2000,retainerShort:'$2,000/mo fixed',note:{en:'Behavioral data integration required',es:'Requiere integración de datos de comportamiento'}}),
+      mka({name:'Automated AI Content Gen for Social Media',tier:2,setup:'$4,000–6,000',setupLow:4000,setupHigh:6000,retainerBase:'$1,500',retainerNum:1500,retainerShort:'$1,500/mo fixed',note:{en:'Multi-channel content scheduling + segmentation',es:'Programación multicanal + segmentación'}}),
+      mka({name:'TrendRadar',tier:2,setup:'$5,000–7,500',setupLow:5000,setupHigh:7500,retainerBase:'$1,500',retainerNum:1500,retainerShort:'$1,500/mo fixed',note:{en:'Continuous data scraping + signal classification',es:'Scraping continuo + clasificación de señales'}}),
+      mka({name:'SEO & Topic Mapper',tier:2,setup:'$5,000–8,000',setupLow:5000,setupHigh:8000,retainerBase:'$1,800',retainerNum:1800,retainerShort:'$1,800/mo fixed',note:{en:'Keyword database + content brief generation',es:'Base de datos de keywords + generación de briefs'}}),
+      mka({name:'ROI Optimizer AI',tier:2,setup:'$6,000–9,000',setupLow:6000,setupHigh:9000,retainerBase:'$2,000',retainerNum:2000,retainerShort:'$2,000/mo fixed',note:{en:'Cross-channel attribution model required',es:'Requiere modelo de atribución multicanal'}}),
+      mka({name:'AdOptimizer RTX',tier:3,setup:'$10,000–15,000',setupLow:10000,setupHigh:15000,retainerBase:'$3,000',retainerNum:3000,retainerShort:'$3,000/mo + 3% ad spend',varLabel:'Ad Spend/mo',varMin:0,varRate:0.03,varDefault:0,varUnit:'USD',note:{en:'3% of managed ad spend above base',es:'3% del gasto en publicidad sobre la base'}}),
+      mka({name:'CampaignMaestro',tier:3,setup:'$12,000–18,000',setupLow:12000,setupHigh:18000,retainerBase:'$3,500',retainerNum:3500,retainerShort:'$3,500/mo fixed',note:{en:'Full multichannel orchestration; high complexity',es:'Orquestación multicanal completa'}}),
+      mka({name:'BrandVoice Optimizer',tier:3,setup:'$2,500–4,000',setupLow:2500,setupHigh:4000,retainerBase:'$900',retainerNum:900,retainerShort:'$900/mo fixed',note:{en:'Prompt/style calibration; low infra',es:'Calibración de estilo; baja infraestructura'}}),
+      mka({name:'CreativeBrain',tier:3,setup:'$5,000–8,000',setupLow:5000,setupHigh:8000,retainerBase:'$1,500',retainerNum:1500,retainerShort:'$1,500/mo fixed',note:{en:'Multi-format creative generation pipeline',es:'Pipeline creativo multi-formato'}}),
+      mka({name:'InfluencerMatch',tier:3,setup:'$5,000–8,000',setupLow:5000,setupHigh:8000,retainerBase:'$1,800',retainerNum:1800,retainerShort:'$1,800/mo fixed',note:{en:'Database + scoring model by niche',es:'Base de datos + modelo de scoring por nicho'}}),
+      mka({name:'ContentDNA',tier:3,setup:'$3,000–5,000',setupLow:3000,setupHigh:5000,retainerBase:'$1,000',retainerNum:1000,retainerShort:'$1,000/mo fixed',note:{en:'Brand tone matching; NLP-based',es:'Coincidencia de tono de marca; NLP'}}),
+    ]},
+    {id:'finance',name:'Financial AI-Thinking™',desc:{en:'Transforms finance from backward-looking reporting to real-time predictive intelligence.',es:'Transforma las finanzas de reportes retrospectivos a inteligencia predictiva en tiempo real.'},impact:'40–60% reduction in finance team workload',setupRange:'from $5,000',implLight:'3–5 wks',implFull:'8–12 wks',
+     agents:[
+      mka({name:'ExpenseRadar',tier:1,setup:'$5,000–8,000',setupLow:5000,setupHigh:8000,retainerBase:'$1,800',retainerNum:1800,retainerShort:'$1,800/mo fixed',note:{en:'Anomaly detection trained on historical data',es:'Detección de anomalías con datos históricos'}}),
+      mka({name:'AI FinancialGuru',tier:1,setup:'$6,000–10,000',setupLow:6000,setupHigh:10000,retainerBase:'$2,000',retainerNum:2000,retainerShort:'$2,000/mo fixed',note:{en:'NLP chatbot connected to live financial data',es:'Chatbot NLP conectado a datos financieros'}}),
+      mka({name:'CashFlow Sentinel',tier:1,setup:'$6,000–9,000',setupLow:6000,setupHigh:9000,retainerBase:'$2,000',retainerNum:2000,retainerShort:'$2,000/mo fixed',note:{en:'Projection model + alert system',es:'Modelo de proyección + sistema de alertas'}}),
+      mka({name:'SmartReconciler',tier:2,setup:'$5,000–8,000',setupLow:5000,setupHigh:8000,retainerBase:'$1,500',retainerNum:1500,retainerShort:'$1,500/mo + $0.10/txn >5,000',varLabel:'Transactions/mo',varMin:5000,varRate:0.10,varDefault:5000,varUnit:'txns',note:{en:'Variable on transaction volume >5,000/mo',es:'Variable sobre volumen >5.000/mes'}}),
+      mka({name:'SmartForecast / Forecast Builder X',tier:2,setup:'$12,000–18,000',setupLow:12000,setupHigh:18000,retainerBase:'$3,000',retainerNum:3000,retainerShort:'$3,000/mo fixed',note:{en:'Custom predictive model; high data complexity',es:'Modelo predictivo personalizado; alta complejidad'}}),
+      mka({name:'Valuation Copilot',tier:3,setup:'$10,000–16,000',setupLow:10000,setupHigh:16000,retainerBase:'$2,500',retainerNum:2500,retainerShort:'$2,500/mo fixed',note:{en:'Scenario modeling engine; M&A grade',es:'Motor de escenarios; grado M&A'}}),
+    ]},
+    {id:'opsback',name:'OpsBack™',desc:{en:'Digitizes and automates the entire administrative backbone — bookkeeping, invoicing, payroll, compliance.',es:'Digitaliza y automatiza toda la columna vertebral administrativa.'},impact:'70% reduction in manual data entry',setupRange:'from $2,500',implLight:'2–4 wks',implFull:'6–10 wks',
+     agents:[
+      mka({name:'InvoiceProcessor',tier:1,setup:'$5,000–8,000',setupLow:5000,setupHigh:8000,retainerBase:'$1,200',retainerNum:1200,retainerShort:'$1,200/mo + $0.50/inv >500',varLabel:'Invoices/mo',varMin:500,varRate:0.50,varDefault:500,varUnit:'invoices',note:{en:'OCR pipeline + ERP integration',es:'Pipeline OCR + integración ERP'}}),
+      mka({name:'BookkeepingBot',tier:1,setup:'$6,000–10,000',setupLow:6000,setupHigh:10000,retainerBase:'$2,000',retainerNum:2000,retainerShort:'$2,000/mo fixed',note:{en:'Chart of accounts mapping + classification',es:'Mapeo del plan de cuentas + clasificación'}}),
+      mka({name:'DocBuilder AI',tier:1,setup:'$3,000–5,000',setupLow:3000,setupHigh:5000,retainerBase:'$1,000',retainerNum:1000,retainerShort:'$1,000/mo fixed',note:{en:'Template library + generative completion',es:'Biblioteca de plantillas + completado generativo'}}),
+      mka({name:'Audit Trail Keeper',tier:1,setup:'$2,500–4,000',setupLow:2500,setupHigh:4000,retainerBase:'$800',retainerNum:800,retainerShort:'$800/mo fixed',note:{en:'Logging infrastructure; standard build',es:'Infraestructura de logging; construcción estándar'}}),
+      mka({name:'ContractVault',tier:2,setup:'$5,000–8,000',setupLow:5000,setupHigh:8000,retainerBase:'$1,500',retainerNum:1500,retainerShort:'$1,500/mo fixed',note:{en:'Document classification + lifecycle automation',es:'Clasificación + automatización del ciclo de vida'}}),
+      mka({name:'PayrollAutomator',tier:2,setup:'$10,000–15,000',setupLow:10000,setupHigh:15000,retainerBase:'$2,500',retainerNum:2500,retainerShort:'$2,500/mo fixed',note:{en:'High compliance risk; country-specific rules',es:'Alto riesgo; reglas específicas por país'}}),
+      mka({name:'ComplianceAuditor',tier:3,setup:'$10,000–16,000',setupLow:10000,setupHigh:16000,retainerBase:'$2,800',retainerNum:2800,retainerShort:'$2,800/mo fixed',note:{en:'Multi-jurisdiction rules engine; high complexity',es:'Motor multi-jurisdicción; alta complejidad'}}),
+    ]},
+    {id:'opsflow',name:'OpsFlow™',desc:{en:'Connects systems and orchestrates intelligent automation across the full operational backbone.',es:'Conecta sistemas y orquesta automatización inteligente en toda la columna operativa.'},impact:'150+ hours saved/employee/mo',setupRange:'from $3,000',implLight:'2–4 wks',implFull:'10–14 wks',
+     agents:[
+      mka({name:'TaskAutomator',tier:1,setup:'$5,000–8,000',setupLow:5000,setupHigh:8000,retainerBase:'$1,800',retainerNum:1800,retainerShort:'$1,800/mo fixed',note:{en:'Process mapping + workflow build',es:'Mapeo de procesos + construcción de workflows'}}),
+      mka({name:'TicketRouter',tier:1,setup:'$3,000–5,000',setupLow:3000,setupHigh:5000,retainerBase:'$1,000',retainerNum:1000,retainerShort:'$1,000/mo fixed',note:{en:'Classification model + routing rules',es:'Modelo de clasificación + reglas de routing'}}),
+      mka({name:'FlowBuilder AI',tier:1,setup:'$3,000–5,000',setupLow:3000,setupHigh:5000,retainerBase:'$1,200',retainerNum:1200,retainerShort:'$1,200/mo fixed',note:{en:'No-code integration builder',es:'Constructor de integraciones sin código'}}),
+      mka({name:'Procurement AI Scout',tier:2,setup:'$6,000–9,000',setupLow:6000,setupHigh:9000,retainerBase:'$2,000',retainerNum:2000,retainerShort:'$2,000/mo fixed',note:{en:'Supplier database + cost comparison engine',es:'Base de proveedores + motor de comparación'}}),
+      mka({name:'Ops Efficiency Monitor',tier:2,setup:'$5,000–8,000',setupLow:5000,setupHigh:8000,retainerBase:'$1,800',retainerNum:1800,retainerShort:'$1,800/mo fixed',note:{en:'Bottleneck detection across workflows',es:'Detección de cuellos de botella'}}),
+      mka({name:'S&OP Copilot',tier:3,setup:'$12,000–18,000',setupLow:12000,setupHigh:18000,retainerBase:'$3,000',retainerNum:3000,retainerShort:'$3,000/mo fixed',note:{en:'Connects sales, inventory, and purchasing',es:'Conecta ventas, inventario y compras'}}),
+      mka({name:'Logistics Route Optimizer',tier:3,setup:'$12,000–18,000',setupLow:12000,setupHigh:18000,retainerBase:'$3,000',retainerNum:3000,retainerShort:'$3,000/mo fixed',note:{en:'Geospatial optimization model; high complexity',es:'Modelo geoespacial; alta complejidad'}}),
+    ]},
+    {id:'datasense',name:'DataSense™',desc:{en:'Consolidates all business data into a single intelligent layer generating predictions and automated reports.',es:'Consolida todos los datos en una capa inteligente que genera predicciones y reportes automáticos.'},impact:'90+ hours saved/employee/mo',setupRange:'from $3,000',implLight:'4–6 wks',implFull:'12–16 wks',
+     agents:[
+      mka({name:'AutoReport AI',tier:1,setup:'$4,000–6,000',setupLow:4000,setupHigh:6000,retainerBase:'$1,500',retainerNum:1500,retainerShort:'$1,500/mo fixed',note:{en:'Report templates + auto-generation pipeline',es:'Plantillas + pipeline de auto-generación'}}),
+      mka({name:'KPI Architect',tier:1,setup:'$3,000–5,000',setupLow:3000,setupHigh:5000,retainerBase:'$1,000',retainerNum:1000,retainerShort:'$1,000/mo fixed',note:{en:'KPI framework definition + dashboard connection',es:'Definición de KPIs + conexión al dashboard'}}),
+      mka({name:'Anomaly Radar',tier:1,setup:'$6,000–9,000',setupLow:6000,setupHigh:9000,retainerBase:'$2,000',retainerNum:2000,retainerShort:'$2,000/mo fixed',note:{en:'Statistical anomaly detection model',es:'Modelo de detección de anomalías estadísticas'}}),
+      mka({name:'InsightHub 360',tier:2,setup:'$8,000–12,000',setupLow:8000,setupHigh:12000,retainerBase:'$2,500',retainerNum:2500,retainerShort:'$2,500/mo fixed',note:{en:'Executive dashboard + narrative engine',es:'Dashboard ejecutivo + motor narrativo'}}),
+      mka({name:'DocMind',tier:2,setup:'$5,000–8,000',setupLow:5000,setupHigh:8000,retainerBase:'$1,500',retainerNum:1500,retainerShort:'$1,500/mo + $0.20/doc >1,000',varLabel:'Docs/mo',varMin:1000,varRate:0.20,varDefault:1000,varUnit:'docs',note:{en:'OCR + NLP pipeline; variable on document volume',es:'Pipeline OCR + NLP; variable según documentos'}}),
+      mka({name:'FlowDirector',tier:2,setup:'$6,000–10,000',setupLow:6000,setupHigh:10000,retainerBase:'$2,000',retainerNum:2000,retainerShort:'$2,000/mo fixed',note:{en:'Cross-platform workflow orchestration',es:'Orquestación de workflows entre plataformas'}}),
+      mka({name:'Data Hygiene Doctor',tier:2,setup:'$5,000–8,000',setupLow:5000,setupHigh:8000,retainerBase:'$1,500',retainerNum:1500,retainerShort:'$1,500/mo fixed',note:{en:'Deduplication + standardization rules engine',es:'Motor de deduplicación + estandarización'}}),
+      mka({name:'SyncCorp',tier:3,setup:'$12,000–20,000',setupLow:12000,setupHigh:20000,retainerBase:'$3,500',retainerNum:3500,retainerShort:'$3,500/mo fixed',note:{en:'Multi-source data unification; highest complexity',es:'Unificación multi-fuente; mayor complejidad'}}),
+      mka({name:'PredictiveAdvisor',tier:3,setup:'$10,000–16,000',setupLow:10000,setupHigh:16000,retainerBase:'$3,000',retainerNum:3000,retainerShort:'$3,000/mo fixed',note:{en:'Custom ML models per team/function',es:'Modelos ML por equipo/función'}}),
+      mka({name:'RootCause Analyzer',tier:3,setup:'$6,000–10,000',setupLow:6000,setupHigh:10000,retainerBase:'$2,000',retainerNum:2000,retainerShort:'$2,000/mo fixed',note:{en:'Causal inference model; moderate-high complexity',es:'Modelo de inferencia causal'}}),
+      mka({name:'AugmentedReporter',tier:3,setup:'$4,000–6,000',setupLow:4000,setupHigh:6000,retainerBase:'$1,200',retainerNum:1200,retainerShort:'$1,200/mo fixed',note:{en:'NL report generation on existing data layer',es:'Reportes en lenguaje natural sobre datos existentes'}}),
+    ]},
+    {id:'smartops',name:'SmartOps™',desc:{en:'Predicts demand, optimizes inventory, and automates procurement using machine learning.',es:'Predice demanda, optimiza inventario y automatiza compras con machine learning.'},impact:'135+ operational hours saved/employee/mo',setupRange:'from $5,000',implLight:'4–6 wks',implFull:'10–14 wks',
+     agents:[
+      mka({name:'Inventory Predictor',tier:1,setup:'$5,000–8,000',setupLow:5000,setupHigh:8000,retainerBase:'$1,800',retainerNum:1800,retainerShort:'$1,800/mo fixed',note:{en:'SKU rotation + restocking prediction',es:'Rotación de SKU + predicción de reposición'}}),
+      mka({name:'CompetitorScout',tier:1,setup:'$5,000–8,000',setupLow:5000,setupHigh:8000,retainerBase:'$1,800',retainerNum:1800,retainerShort:'$1,800/mo fixed',note:{en:'Real-time scraping + pricing benchmarking',es:'Scraping tiempo real + benchmarking de precios'}}),
+      mka({name:'ProcureBot',tier:2,setup:'$6,000–9,000',setupLow:6000,setupHigh:9000,retainerBase:'$2,000',retainerNum:2000,retainerShort:'$2,000/mo + $1/PO >200',varLabel:'POs/mo',varMin:200,varRate:1,varDefault:200,varUnit:'POs',note:{en:'Variable on purchase order volume >200/mo',es:'Variable sobre POs >200/mes'}}),
+      mka({name:'DemandPredictor',tier:2,setup:'$12,000–18,000',setupLow:12000,setupHigh:18000,retainerBase:'$3,000',retainerNum:3000,retainerShort:'$3,000/mo fixed',note:{en:'Custom ML forecasting; requires historical data',es:'Forecasting ML; requiere datos históricos'}}),
+      mka({name:'StockOptimizer',tier:3,setup:'$10,000–16,000',setupLow:10000,setupHigh:16000,retainerBase:'$2,800',retainerNum:2800,retainerShort:'$2,800/mo fixed',note:{en:'Inventory optimization across SKUs and warehouses',es:'Optimización de inventario en SKUs y almacenes'}}),
+      mka({name:'Demand Sensing AI',tier:3,setup:'$12,000–18,000',setupLow:12000,setupHigh:18000,retainerBase:'$3,000',retainerNum:3000,retainerShort:'$3,000/mo fixed',note:{en:'External signal integration + historical data fusion',es:'Integración de señales externas + fusión histórica'}}),
+    ]},
+    {id:'talent',name:'TalentAI™',desc:{en:'Automates recruitment, onboarding, performance tracking, and people analytics.',es:'Automatiza reclutamiento, onboarding, rendimiento y people analytics.'},impact:'50% reduction in time-to-hire',setupRange:'from $3,000',implLight:'3–5 wks',implFull:'8–12 wks',
+     agents:[
+      mka({name:'OnboardFlow',tier:1,setup:'$3,000–5,000',setupLow:3000,setupHigh:5000,retainerBase:'$1,000',retainerNum:1000,retainerShort:'$1,000/mo fixed',note:{en:'Workflow automation + content delivery',es:'Automatización de workflows + entrega de contenido'}}),
+      mka({name:'TimeTracker AI',tier:1,setup:'$3,000–5,000',setupLow:3000,setupHigh:5000,retainerBase:'$1,000',retainerNum:1000,retainerShort:'$1,000/mo + $0.50/user >50',varLabel:'Users',varMin:50,varRate:0.50,varDefault:50,varUnit:'users',note:{en:'Variable on users above 50',es:'Variable sobre usuarios >50'}}),
+      mka({name:'Performance Reviewer Bot',tier:1,setup:'$3,000–5,000',setupLow:3000,setupHigh:5000,retainerBase:'$1,000',retainerNum:1000,retainerShort:'$1,000/mo fixed',note:{en:'Automated review generation; standard complexity',es:'Generación automática de evaluaciones'}}),
+      mka({name:'HireSense',tier:2,setup:'$6,000–9,000',setupLow:6000,setupHigh:9000,retainerBase:'$2,000',retainerNum:2000,retainerShort:'$2,000/mo + $200/hire >5',varLabel:'Hires/mo',varMin:5,varRate:200,varDefault:5,varUnit:'hires',note:{en:'Variable on hires above 5/mo',es:'Variable sobre contrataciones >5/mes'}}),
+      mka({name:'TalentMatch AI',tier:2,setup:'$5,000–8,000',setupLow:5000,setupHigh:8000,retainerBase:'$1,800',retainerNum:1800,retainerShort:'$1,800/mo fixed',note:{en:'CV parsing + interview analysis model',es:'Parsing de CV + análisis de entrevistas'}}),
+      mka({name:'PerformanceController',tier:2,setup:'$5,000–8,000',setupLow:5000,setupHigh:8000,retainerBase:'$1,800',retainerNum:1800,retainerShort:'$1,800/mo fixed',note:{en:'Multi-source performance data aggregation',es:'Agregación de datos de rendimiento multi-fuente'}}),
+      mka({name:'MoodPulse',tier:3,setup:'$5,000–8,000',setupLow:5000,setupHigh:8000,retainerBase:'$1,500',retainerNum:1500,retainerShort:'$1,500/mo fixed',note:{en:'Sentiment analysis + burnout detection',es:'Análisis de sentimiento + detección burnout'}}),
+      mka({name:'SkillMap Architect',tier:3,setup:'$5,000–8,000',setupLow:5000,setupHigh:8000,retainerBase:'$1,800',retainerNum:1800,retainerShort:'$1,800/mo fixed',note:{en:'Skills taxonomy + gap analysis engine',es:'Taxonomía de habilidades + análisis de brechas'}}),
+    ]},
+    {id:'customer',name:'CustomerMind™',desc:{en:'Handles, analyzes, and retains customers automatically through conversational AI and predictive retention.',es:'Gestiona, analiza y retiene clientes mediante AI conversacional y retención predictiva.'},impact:'40% reduction in response times · 25–35% churn reduction',setupRange:'from $3,000',implLight:'3–4 wks',implFull:'8–10 wks',
+     agents:[
+      mka({name:'ChatFlowAI',tier:1,setup:'$6,000–10,000',setupLow:6000,setupHigh:10000,retainerBase:'$2,000',retainerNum:2000,retainerShort:'$2,000/mo + $0.02/conv >5,000',varLabel:'Conversations/mo',varMin:5000,varRate:0.02,varDefault:5000,varUnit:'convs',note:{en:'Omnichannel; variable on conversation volume',es:'Omnicanal; variable según conversaciones'}}),
+      mka({name:'Support Copilot 24/7',tier:1,setup:'$6,000–9,000',setupLow:6000,setupHigh:9000,retainerBase:'$2,000',retainerNum:2000,retainerShort:'$2,000/mo fixed',note:{en:'Knowledge base + CRM connection',es:'Base de conocimiento + conexión CRM'}}),
+      mka({name:'Complaint Resolver AI',tier:1,setup:'$3,000–5,000',setupLow:3000,setupHigh:5000,retainerBase:'$1,200',retainerNum:1200,retainerShort:'$1,200/mo fixed',note:{en:'Pattern detection + resolution routing',es:'Detección de patrones + routing de resolución'}}),
+      mka({name:'SmartCSAT',tier:1,setup:'$3,000–5,000',setupLow:3000,setupHigh:5000,retainerBase:'$1,000',retainerNum:1000,retainerShort:'$1,000/mo fixed',note:{en:'Survey automation + NPS/CSAT correlation',es:'Encuestas + correlación NPS/CSAT'}}),
+      mka({name:'SentimentSense',tier:2,setup:'$5,000–8,000',setupLow:5000,setupHigh:8000,retainerBase:'$1,500',retainerNum:1500,retainerShort:'$1,500/mo fixed',note:{en:'NLP sentiment model on client data',es:'Modelo NLP de sentimiento en datos del cliente'}}),
+      mka({name:'ChurnPredictor CX',tier:2,setup:'$10,000–16,000',setupLow:10000,setupHigh:16000,retainerBase:'$3,000',retainerNum:3000,retainerShort:'$3,000/mo fixed',note:{en:'Predictive churn model; requires history',es:'Modelo predictivo de churn; requiere historial'}}),
+      mka({name:'Voice of Customer Lens',tier:2,setup:'$5,000–8,000',setupLow:5000,setupHigh:8000,retainerBase:'$1,500',retainerNum:1500,retainerShort:'$1,500/mo fixed',note:{en:'Multi-source review aggregation + NLP',es:'Agregación multi-fuente + NLP'}}),
+      mka({name:'EngageFlow',tier:2,setup:'$6,000–9,000',setupLow:6000,setupHigh:9000,retainerBase:'$2,000',retainerNum:2000,retainerShort:'$2,000/mo fixed',note:{en:'Journey mapping + multichannel automation',es:'Mapeo de journey + automatización multicanal'}}),
+      mka({name:'LoyaltyArchitect',tier:3,setup:'$8,000–12,000',setupLow:8000,setupHigh:12000,retainerBase:'$2,500',retainerNum:2500,retainerShort:'$2,500/mo fixed',note:{en:'Loyalty program design + behavioral segmentation',es:'Diseño de programa de fidelidad + segmentación'}}),
+      mka({name:'Retention Sentinel',tier:3,setup:'$6,000–9,000',setupLow:6000,setupHigh:9000,retainerBase:'$2,000',retainerNum:2000,retainerShort:'$2,000/mo fixed',note:{en:'Churn prediction + intervention trigger',es:'Predicción de churn + triggers de intervención'}}),
+      mka({name:'Customer Value Maximizer',tier:3,setup:'$6,000–9,000',setupLow:6000,setupHigh:9000,retainerBase:'$2,000',retainerNum:2000,retainerShort:'$2,000/mo fixed',note:{en:'LTV model + upsell/referral recommendation',es:'Modelo LTV + recomendaciones de upsell'}}),
+    ]},
+    {id:'competitor',name:'CompetitorIQ™',desc:{en:'Monitors the competitive landscape across pricing, launches, market share, sentiment, and regulatory signals.',es:'Monitorea el panorama competitivo en precios, lanzamientos, cuota de mercado y señales regulatorias.'},impact:'48hr advance warning on pricing moves',setupRange:'from $5,000',implLight:'3–5 wks',implFull:'8–12 wks',
+     agents:[
+      mka({name:'Price Intelligence Agent',tier:1,setup:'$6,000–10,000',setupLow:6000,setupHigh:10000,retainerBase:'$2,000',retainerNum:2000,retainerShort:'$2,000/mo + $500/market',varLabel:'Markets',varMin:1,varRate:500,varDefault:1,varUnit:'markets',note:{en:'Variable on number of markets monitored',es:'Variable según mercados monitoreados'}}),
+      mka({name:'Product Launch Tracker',tier:1,setup:'$5,000–8,000',setupLow:5000,setupHigh:8000,retainerBase:'$1,800',retainerNum:1800,retainerShort:'$1,800/mo fixed',note:{en:'Multi-source scraping + classification pipeline',es:'Scraping multi-fuente + clasificación'}}),
+      mka({name:'Sentiment Analyzer',tier:1,setup:'$5,000–8,000',setupLow:5000,setupHigh:8000,retainerBase:'$1,500',retainerNum:1500,retainerShort:'$1,500/mo fixed',note:{en:'Social + forum + review monitoring',es:'Monitoreo social + foros + reseñas'}}),
+      mka({name:'Digital Market Share Monitor',tier:2,setup:'$6,000–9,000',setupLow:6000,setupHigh:9000,retainerBase:'$2,000',retainerNum:2000,retainerShort:'$2,000/mo fixed',note:{en:'SEO + traffic intelligence integration',es:'Integración de inteligencia SEO + tráfico'}}),
+      mka({name:'Demand Intelligence Agent',tier:2,setup:'$6,000–9,000',setupLow:6000,setupHigh:9000,retainerBase:'$2,000',retainerNum:2000,retainerShort:'$2,000/mo fixed',note:{en:'Client innovation + sourcing signal monitoring',es:'Monitoreo de señales de innovación'}}),
+      mka({name:'Signal Intelligence Engine',tier:3,setup:'$10,000–16,000',setupLow:10000,setupHigh:16000,retainerBase:'$3,000',retainerNum:3000,retainerShort:'$3,000/mo fixed',note:{en:'Macro signal aggregation; multiple sources',es:'Agregación de señales macro; múltiples fuentes'}}),
+      mka({name:'Supply Chain CI',tier:3,setup:'$10,000–16,000',setupLow:10000,setupHigh:16000,retainerBase:'$2,800',retainerNum:2800,retainerShort:'$2,800/mo fixed',note:{en:'Customs + logistics data; high complexity',es:'Datos aduaneros + logística; alta complejidad'}}),
+      mka({name:'Regulatory Intelligence Bot',tier:3,setup:'$6,000–9,000',setupLow:6000,setupHigh:9000,retainerBase:'$2,000',retainerNum:2000,retainerShort:'$2,000/mo + $300/jurisdiction',varLabel:'Jurisdictions',varMin:1,varRate:300,varDefault:1,varUnit:'jurisdictions',note:{en:'Variable on regulatory jurisdictions',es:'Variable según jurisdicciones regulatorias'}}),
+    ]},
+    {id:'legal',name:'LegalBot™',desc:{en:'Reviews contracts, detects legal risks, generates standard documents, and audits compliance autonomously.',es:'Revisa contratos, detecta riesgos legales y audita cumplimiento de forma autónoma.'},impact:'70+ hrs saved/employee/mo · 80% reduction in legal spend',setupRange:'from $2,500',implLight:'3–4 wks',implFull:'6–10 wks',
+     agents:[
+      mka({name:'ContractScan',tier:1,setup:'$5,000–8,000',setupLow:5000,setupHigh:8000,retainerBase:'$1,500',retainerNum:1500,retainerShort:'$1,500/mo + $1/contract >100',varLabel:'Contracts/mo',varMin:100,varRate:1,varDefault:100,varUnit:'contracts',note:{en:'Variable on contract volume above 100/mo',es:'Variable sobre contratos >100/mes'}}),
+      mka({name:'DocBuilder AI (Legal)',tier:1,setup:'$3,000–5,000',setupLow:3000,setupHigh:5000,retainerBase:'$1,000',retainerNum:1000,retainerShort:'$1,000/mo fixed',note:{en:'Template-based legal doc generation',es:'Generación de documentos legales basada en plantillas'}}),
+      mka({name:'Audit Trail Keeper (Legal)',tier:1,setup:'$2,500–4,000',setupLow:2500,setupHigh:4000,retainerBase:'$800',retainerNum:800,retainerShort:'$800/mo fixed',note:{en:'Logging infrastructure; standard build',es:'Infraestructura de logging; estándar'}}),
+      mka({name:'Contract Reviewer AI',tier:2,setup:'$6,000–9,000',setupLow:6000,setupHigh:9000,retainerBase:'$2,000',retainerNum:2000,retainerShort:'$2,000/mo fixed',note:{en:'Risk clause library + legal NLP training',es:'Biblioteca de cláusulas + entrenamiento NLP legal'}}),
+      mka({name:'Policy Compliance Bot',tier:2,setup:'$6,000–9,000',setupLow:6000,setupHigh:9000,retainerBase:'$2,000',retainerNum:2000,retainerShort:'$2,000/mo fixed',note:{en:'GDPR/ISO/AI Act rule engine + automated audit',es:'Motor GDPR/ISO/AI Act + auditoría automática'}}),
+      mka({name:'ComplianceAuditor (Legal)',tier:3,setup:'$10,000–16,000',setupLow:10000,setupHigh:16000,retainerBase:'$2,800',retainerNum:2800,retainerShort:'$2,800/mo fixed',note:{en:'Multi-jurisdiction rules engine; high complexity',es:'Motor multi-jurisdicción; alta complejidad'}}),
+      mka({name:'Ethical Guardrails Engine',tier:3,setup:'$10,000–15,000',setupLow:10000,setupHigh:15000,retainerBase:'$2,500',retainerNum:2500,retainerShort:'$2,500/mo fixed',note:{en:'AI behavior control layer; enterprise-grade',es:'Capa de control de comportamiento AI; nivel enterprise'}}),
+    ]},
+    {id:'digital',name:'DigitalCore™',desc:{en:'Designs, builds, and optimizes the digital infrastructure — websites, e-commerce, CRM, and custom applications.',es:'Diseña, construye y optimiza la infraestructura digital — sitios web, e-commerce, CRM y apps.'},impact:'15–25% increase in e-commerce conversion',setupRange:'from $5,000',implLight:'4–6 wks',implFull:'12–20 wks',
+     agents:[
+      mka({name:'SEO Intelligence Layer',tier:1,setup:'$5,000–8,000',setupLow:5000,setupHigh:8000,retainerBase:'$1,800',retainerNum:1800,retainerShort:'$1,800/mo fixed',note:{en:'Continuous site audit + content optimization',es:'Auditoría continua + optimización de contenido'}}),
+      mka({name:'UX Optimizer AI',tier:1,setup:'$6,000–10,000',setupLow:6000,setupHigh:10000,retainerBase:'$2,000',retainerNum:2000,retainerShort:'$2,000/mo fixed',note:{en:'Heatmap + behavior analysis + recommendations',es:'Heatmap + análisis de comportamiento + recomendaciones'}}),
+      mka({name:'DataMapper Studio',tier:1,setup:'$5,000–8,000',setupLow:5000,setupHigh:8000,retainerBase:'$1,500',retainerNum:1500,retainerShort:'$1,500/mo fixed',note:{en:'Cross-system data sync and translation layer',es:'Sincronización y traducción entre sistemas'}}),
+      mka({name:'Checkout Optimizer',tier:2,setup:'$5,000–8,000',setupLow:5000,setupHigh:8000,retainerBase:'$1,500',retainerNum:1500,retainerShort:'$1,500/mo + 1% incr. revenue',varLabel:'Incr. Revenue/mo',varMin:0,varRate:0.01,varDefault:0,varUnit:'USD',note:{en:'1% of incremental revenue attributed',es:'1% del revenue incremental atribuido'}}),
+      mka({name:'Product Recommender AI',tier:2,setup:'$6,000–10,000',setupLow:6000,setupHigh:10000,retainerBase:'$2,000',retainerNum:2000,retainerShort:'$2,000/mo + 0.5% attr. revenue',varLabel:'Attr. Revenue/mo',varMin:0,varRate:0.005,varDefault:0,varUnit:'USD',note:{en:'0.5% of attributed revenue from recommendations',es:'0.5% del revenue atribuido a recomendaciones'}}),
+      mka({name:'Customer LTV Forecaster',tier:2,setup:'$6,000–9,000',setupLow:6000,setupHigh:9000,retainerBase:'$2,000',retainerNum:2000,retainerShort:'$2,000/mo fixed',note:{en:'LTV prediction model per customer segment',es:'Modelo LTV por segmento de clientes'}}),
+      mka({name:'Dynamic Pricing Agent',tier:3,setup:'$10,000–16,000',setupLow:10000,setupHigh:16000,retainerBase:'$2,500',retainerNum:2500,retainerShort:'$2,500/mo + 1.5% incr. revenue',varLabel:'Incr. Revenue/mo',varMin:0,varRate:0.015,varDefault:0,varUnit:'USD',note:{en:'1.5% of incremental revenue attributed',es:'1.5% del revenue incremental atribuido'}}),
+    ]},
+    {id:'command',name:'AI Command Center™',desc:{en:'The operating system for the AI-native organization — monitors, coordinates, and governs all AI agents.',es:'El sistema operativo para la organización AI-nativa — monitorea, coordina y gobierna todos los agentes.'},impact:'99%+ workflow uptime · Full audit trail & governance',setupRange:'from $6,000',implLight:'4–6 wks',implFull:'8–12 wks',
+     agents:[
+      mka({name:'PerformanceMonitor',tier:1,setup:'$6,000–9,000',setupLow:6000,setupHigh:9000,retainerBase:'$2,000',retainerNum:2000,retainerShort:'$2,000/mo fixed',note:{en:'Telemetry + dashboard build across all agents',es:'Telemetría + dashboard para todos los agentes'}}),
+      mka({name:'AgentOpsControl',tier:1,setup:'$6,000–9,000',setupLow:6000,setupHigh:9000,retainerBase:'$2,000',retainerNum:2000,retainerShort:'$2,000/mo fixed',note:{en:'Real-time ops console + traceability layer',es:'Consola de operaciones + trazabilidad'}}),
+      mka({name:'Error Monitor & Auto-Heal',tier:1,setup:'$6,000–9,000',setupLow:6000,setupHigh:9000,retainerBase:'$2,000',retainerNum:2000,retainerShort:'$2,000/mo fixed',note:{en:'Integration failure detection + recovery automation',es:'Detección de fallas + recuperación automática'}}),
+      mka({name:'Virtual Executive Assistant',tier:1,setup:'$6,000–9,000',setupLow:6000,setupHigh:9000,retainerBase:'$2,000',retainerNum:2000,retainerShort:'$2,000/mo fixed',note:{en:'Calendar + email + task management integration',es:'Calendario + correo + gestión de tareas'}}),
+      mka({name:'AgentOrchestrator',tier:2,setup:'$15,000–20,000',setupLow:15000,setupHigh:20000,retainerBase:'$4,000',retainerNum:4000,retainerShort:'$4,000/mo fixed',note:{en:'Core infrastructure; complexity scales with agent count',es:'Infraestructura central; escala con número de agentes'}}),
+      mka({name:'MCP Gateway Enterprise',tier:2,setup:'$12,000–18,000',setupLow:12000,setupHigh:18000,retainerBase:'$3,500',retainerNum:3500,retainerShort:'$3,500/mo fixed',note:{en:'Enterprise security + granular permission system',es:'Seguridad empresarial + permisos granulares'}}),
+      mka({name:'Cyber Risk Sentinel',tier:3,setup:'$12,000–18,000',setupLow:12000,setupHigh:18000,retainerBase:'$3,500',retainerNum:3500,retainerShort:'$3,500/mo fixed',note:{en:'Security monitoring + auto-response; compliance-grade',es:'Monitoreo + respuesta automática; grado cumplimiento'}}),
+      mka({name:'Identity & Access AI Manager',tier:3,setup:'$10,000–15,000',setupLow:10000,setupHigh:15000,retainerBase:'$2,800',retainerNum:2800,retainerShort:'$2,800/mo fixed',note:{en:'IAM + least-privilege enforcement across agents',es:'IAM + mínimo privilegio en todos los agentes'}}),
+    ]},
+  ];
+  D.forEach((p)=>{
+    p.img=DEFAULT_IMGS[p.id]||DEFAULT_IMGS.datasense;
+    p.agents.forEach((a,i)=>{a._uid=p.id+'__'+i;a._platformName=p.name;});
+  });
+  return D;
+}
+
+function defaultDiscounts(platforms){
+  const light={},lightFull={};
+  platforms.forEach(p=>{light[p.id]=10;lightFull[p.id]=20;});
+  return{light,lightFull};
+}
+
+function defaultPackages(){
+  return[
+    {id:'Package A',name:'AI Ignition (Pilot)',objective:'Prove ROI in one critical area within 30–45 days',scope:'1 Core Platform with 3–5 agents + CRM/ERP connection + live dashboard',timeline:'4–6 weeks',investment:'$15,000–$30,000 one-time + monthly retainer',valueDelivered:'Quantified time savings per role, live proof of concept, clear ROI model for full deployment decision.',discount:0},
+    {id:'Package B',name:'AI Growth Suite',objective:'Deploy AI across Revenue + Operations + Data',scope:'GrowthEngine + MarketingPilot + OpsFlow + DataSense; full agent deployment, integrations, dashboards, team training',timeline:'15–20 weeks',investment:'$60,000–$120,000 + ongoing AI operations retainer',valueDelivered:'Automated revenue pipeline, 150+ hours/month saved, unified data layer. Estimated ROI: 3–5× within 6 months.',discount:10},
+    {id:'Package C',name:'Full AI-Native Transformation',objective:'Complete organizational AI transformation',scope:'All 13 Core Platforms; AI Command Center as orchestration layer; customization per business model; advisory + governance',timeline:'24–32 weeks',investment:'$150,000–$400,000 + ongoing AI operating partnership',valueDelivered:'AI-native operating model across all functions. 500–700 hours/month saved. 30–40% structural cost reduction.',discount:15},
+  ];
+}
+
+window.agentApp=function agentApp(){
+  return{
+    activeTab:'home',activePlat:'growth',lang:'en',
+    search:'',filterTier:0,setupSearch:'',setupPlatFilter:'',
+    customLogo:'',logoUrlInput:'',
+    quote:[],projectName:'',
+    showModal:false,showCustomizer:false,
+    showPlatModal:false,platModalData:null,
+    platforms:[],savedProjects:[],currentProjectId:null,
+    previewQ:{name:'',agents:[]},
+    compareA:{name:'',agents:[]},compareB:{name:'',agents:[]},
+    compareAId:'',compareBId:'',
+    pdfMeta:{clientName:'',contactName:'',intro:'',priorities:'',conditions:'',nextSteps:''},
+    discounts:{light:{},lightFull:{}},
+    packages:[],
+    _defaults:null,
+    // tier section open state
+    _secOpen:{light:true,full:true,addon:true},
+
+    t(k){return(I18N[this.lang]||I18N.en)[k]||k;},
+
+    setLang(l){
+      this.lang=l;
+      if(!this.pdfMeta.conditions||(this.pdfMeta.conditions===DC_EN||this.pdfMeta.conditions===DC_ES))
+        this.pdfMeta.conditions=l==='es'?DC_ES:DC_EN;
+      if(!this.pdfMeta.nextSteps||(this.pdfMeta.nextSteps===NS_EN||this.pdfMeta.nextSteps===NS_ES))
+        this.pdfMeta.nextSteps=l==='es'?NS_ES:NS_EN;
+      try{localStorage.setItem('swl_lang',l);}catch(e){}
+    },
+
+    // ── Tier sections ──
+    tierSections(){
+      const p=this.currentPlatform();
+      const t1=p.agents.filter(a=>a.tier===1);
+      const t2=p.agents.filter(a=>a.tier===2);
+      const t3=p.agents.filter(a=>a.tier===3);
+      const pid=p.id;
+      const discLight=this.discounts.light[pid]||0;
+      const discLF=this.discounts.lightFull[pid]||0;
+      const activeDisc=this.activeBundleDiscount();
+      return[
+        {key:'light',label:this.t('lightDeployment'),agents:t1,bundleDisc:discLight,open:this._secOpen.light},
+        {key:'full',label:this.t('fullDeployment'),agents:t2,bundleDisc:discLF,open:this._secOpen.full},
+        {key:'addon',label:this.t('addons'),agents:t3,bundleDisc:0,open:this._secOpen.addon},
+      ];
+    },
+
+    // Select/deselect all in a tier section
+    allInSectionSelected(sec){
+      const plat=this.currentPlatform().name;
+      return sec.agents.length>0&&sec.agents.every(a=>this.quote.some(q=>q.name===a.name&&q.platform===plat));
+    },
+    selectAllInSection(sec){
+      const plat=this.currentPlatform().name;
+      if(this.allInSectionSelected(sec)){
+        sec.agents.forEach(a=>{const idx=this.quote.findIndex(q=>q.name===a.name&&q.platform===plat);if(idx>=0)this.quote.splice(idx,1);});
+      } else {
+        sec.agents.forEach(a=>{if(!this.quote.some(q=>q.name===a.name&&q.platform===plat))this.quote.push({...a,platform:plat,uid:Date.now()+Math.random(),varValue:a.varDefault||a.varMin||0});});
+      }
+    },
+
+    // ── Discount logic ──
+    activeBundleDiscount(){
+      const p=this.currentPlatform();
+      const pid=p.id;
+      const plat=p.name;
+      const t1=p.agents.filter(a=>a.tier===1);
+      const t2=p.agents.filter(a=>a.tier===2);
+      const selNames=this.quote.filter(q=>q.platform===plat).map(q=>q.name);
+      const allT1Sel=t1.length>0&&t1.every(a=>selNames.includes(a.name));
+      const allT2Sel=t2.length>0&&t2.every(a=>selNames.includes(a.name));
+      if(allT1Sel&&allT2Sel)return this.discounts.lightFull[pid]||0;
+      if(allT1Sel)return this.discounts.light[pid]||0;
+      return 0;
+    },
+    activeBundleDiscountLabel(){
+      const d=this.activeBundleDiscount();
+      if(d===0)return'';
+      const p=this.currentPlatform();
+      const pid=p.id;
+      if(d===(this.discounts.lightFull[pid]||0))return d+'% bundle discount — Light + Full deployment selected';
+      return d+'% bundle discount — Full Light deployment selected';
+    },
+
+    // Per-agent discount (checks if its platform has all of its tier selected)
+    getAgentDiscount(agent){
+      const pid=this.platforms.find(p=>p.name===agent.platform||p.name===agent._platformName)?.id;
+      if(!pid)return 0;
+      const p=this.platforms.find(pl=>pl.id===pid);
+      if(!p)return 0;
+      const plat=p.name;
+      const tier=agent.tier;
+      const sameTier=p.agents.filter(a=>a.tier===tier);
+      const selNames=this.quote.filter(q=>q.platform===plat).map(q=>q.name);
+      const allSel=sameTier.length>0&&sameTier.every(a=>selNames.includes(a.name));
+      if(!allSel)return 0;
+      if(tier===1){
+        const t2=p.agents.filter(a=>a.tier===2);
+        const allT2=t2.length>0&&t2.every(a=>selNames.includes(a.name));
+        if(allT2)return this.discounts.lightFull[pid]||0;
+        return this.discounts.light[pid]||0;
+      }
+      if(tier===2){
+        const t1=p.agents.filter(a=>a.tier===1);
+        const allT1=t1.length>0&&t1.every(a=>selNames.includes(a.name));
+        if(allT1)return this.discounts.lightFull[pid]||0;
+        return 0;
+      }
+      return 0;
+    },
+
+    totalDiscount(){
+      return this.quote.reduce((s,item)=>{
+        const d=this.getAgentDiscount(item);
+        if(!d)return s;
+        const base=item.retainerNum||0;
+        const over=Math.max(0,(item.varValue||0)-(item.varMin||0));
+        const gross=base+Math.round(over*(item.varRate||0));
+        return s+Math.round(gross*d/100);
+      },0);
+    },
+
+    // ── ROI ──
+    calcROI(agents){
+      let hours=0,totalVal=0;
+      agents.forEach(a=>{const r=AGENT_ROI[a.name]||{h:15,val:3000};hours+=r.h;totalVal+=r.val;});
+      const monthlyRetainer=agents.reduce((s,i)=>s+(i.retainerNum||0),0);
+      const setupMid=agents.reduce((s,a)=>s+((a.setupLow||0)+(a.setupHigh||0))/2,0);
+      const annualRetainer=monthlyRetainer*12;
+      const roi=annualRetainer>0?Math.round((totalVal/annualRetainer)*10)/10:0;
+      const payback=monthlyRetainer>0?Math.round(setupMid/Math.max(totalVal/12-monthlyRetainer,1)):0;
+      return{hours,roi:Math.max(roi,1),payback:Math.max(1,Math.min(payback,36))};
+    },
+
+    // ── Init ──
+    init(){
+      this._defaults=JSON.parse(JSON.stringify(buildPlatforms()));
+      this.pdfMeta.conditions=DC_EN;this.pdfMeta.nextSteps=NS_EN;
+      try{
+        const sl=localStorage.getItem('swl_lang');
+        if(sl){this.lang=sl;if(sl==='es'){this.pdfMeta.conditions=DC_ES;this.pdfMeta.nextSteps=NS_ES;}}
+        const raw=localStorage.getItem('swl_v7');
+        if(raw){
+          const d=JSON.parse(raw);
+          if(d.platforms){this.platforms=d.platforms;this.platforms.forEach((p)=>{if(!p.img)p.img=DEFAULT_IMGS[p.id]||DEFAULT_IMGS.datasense;p.agents.forEach((a,i)=>{a._uid=p.id+'__'+i;a._platformName=p.name;});});}
+          else this.platforms=buildPlatforms();
+          this.quote=d.quote||[];this.projectName=d.project||'';
+          this.savedProjects=(d.sp||[]).map(p=>({...p,_showVersions:false}));
+          this.currentProjectId=d.cpid||null;
+          this.customLogo=d.logo||'';this.logoUrlInput=d.logo||'';
+          if(d.imgs)this.platforms.forEach(p=>{if(d.imgs[p.id])p.img=d.imgs[p.id];});
+          if(d.meta)this.pdfMeta=Object.assign(this.pdfMeta,d.meta);
+          if(d.disc)this.discounts=d.disc; else this.discounts=defaultDiscounts(this.platforms);
+          if(d.pkgs)this.packages=d.pkgs; else this.packages=defaultPackages();
+        } else {this.platforms=buildPlatforms();this.discounts=defaultDiscounts(this.platforms);this.packages=defaultPackages();}
+      }catch(e){this.platforms=buildPlatforms();this.discounts=defaultDiscounts(this.platforms);this.packages=defaultPackages();}
+      this.$watch('platforms',()=>this.persist(),{deep:true});
+      this.$watch('quote',()=>this.persist(),{deep:true});
+      this.$watch('projectName',()=>this.persist());
+      this.$watch('savedProjects',()=>this.persist(),{deep:true});
+      this.$watch('customLogo',()=>this.persist());
+      this.$watch('pdfMeta',()=>this.persist(),{deep:true});
+      this.$watch('discounts',()=>this.persist(),{deep:true});
+      this.$watch('packages',()=>this.persist(),{deep:true});
+    },
+
+    persist(){
+      const imgs={};this.platforms.forEach(p=>imgs[p.id]=p.img);
+      try{localStorage.setItem('swl_v7',JSON.stringify({platforms:this.platforms,quote:this.quote,project:this.projectName,sp:this.savedProjects.map(p=>{const{_showVersions,...r}=p;return r;}),cpid:this.currentProjectId,logo:this.customLogo,imgs,meta:this.pdfMeta,disc:this.discounts,pkgs:this.packages}));}catch(e){}
+    },
+
+    totalAgents(){return this.platforms.reduce((s,p)=>s+p.agents.length,0);},
+    currentPlatform(){return this.platforms.find(p=>p.id===this.activePlat)||this.platforms[0];},
+    goToQuoter(id){this.activePlat=id;this.activeTab='quoter';this.search='';this.filterTier=0;},
+
+    // Platform detail modal
+    openPlatModal(p){this.platModalData=p;this.showPlatModal=true;},
+    goToQuoterFromModal(id){this.showPlatModal=false;this.goToQuoter(id);},
+    platModalAgents(p,type){
+      if(!p)return[];
+      if(type==='light')return p.agents.filter(a=>a.tier===1);
+      if(type==='full')return p.agents.filter(a=>a.tier===2);
+      return p.agents.filter(a=>a.tier===3);
+    },
+    platModalROI(p,type){
+      const agents=this.platModalAgents(p,type);
+      const r=this.calcROI(agents);
+      return r.roi+'x · '+r.hours+'h/mo';
+    },
+    platModalRetainer(p,type){
+      return this.platModalAgents(p,type).reduce((s,a)=>s+(a.retainerNum||0),0);
+    },
+
+    filtered(){return this.currentPlatform().agents.filter(a=>a.name.toLowerCase().includes(this.search.toLowerCase())&&(this.filterTier===0||a.tier===this.filterTier));},
+    allAgentsFiltered(){
+      let res=[];this.platforms.forEach(p=>p.agents.forEach(a=>res.push(a)));
+      if(this.setupSearch){const q=this.setupSearch.toLowerCase();res=res.filter(a=>a.name.toLowerCase().includes(q)||(a._platformName||'').toLowerCase().includes(q));}
+      if(this.setupPlatFilter){const pf=this.platforms.find(p=>p.id===this.setupPlatFilter);if(pf)res=res.filter(a=>a._platformName===pf.name);}
+      return res;
+    },
+
+    isSelected(a){return this.quote.some(q=>q.name===a.name&&q.platform===this.currentPlatform().name);},
+    toggleAgent(a){
+      const plat=this.currentPlatform().name;
+      const idx=this.quote.findIndex(q=>q.name===a.name&&q.platform===plat);
+      if(idx>=0)this.quote.splice(idx,1);
+      else this.quote.push({...a,platform:plat,uid:Date.now()+Math.random(),varValue:a.varDefault||a.varMin||0});
+    },
+    removeFromQuote(i){this.quote.splice(i,1);},
+    clearQuote(){if(confirm(this.lang==='es'?'¿Limpiar la cotización?':'Clear the entire quote?')){this.quote=[];this.projectName='';this.currentProjectId=null;}},
+
+    computedRetainerStr(item){
+      const base=item.retainerNum||0;
+      if(!item.varLabel)return(item.retainerBase||'$'+this.fmtN(base))+'/mo fixed';
+      const over=Math.max(0,(item.varValue||0)-(item.varMin||0));
+      const varCost=Math.round(over*(item.varRate||0));
+      if(varCost===0)return(item.retainerBase||'$'+this.fmtN(base))+'/mo (base)';
+      return'$'+this.fmtN(base)+'/mo + $'+this.fmtN(varCost)+' = $'+this.fmtN(base+varCost)+'/mo';
+    },
+    setupLow(){return this.quote.reduce((s,a)=>s+(a.setupLow||0),0);},
+    setupHigh(){return this.quote.reduce((s,a)=>s+(a.setupHigh||0),0);},
+    retainerTotal(){
+      const gross=this.quote.reduce((s,item)=>{const b=item.retainerNum||0;const o=Math.max(0,(item.varValue||0)-(item.varMin||0));return s+b+Math.round(o*(item.varRate||0));},0);
+      return gross-this.totalDiscount();
+    },
+
+    parseSetupRange(a){const pts=(a.setup||'').replace(/[$,]/g,'').split(/[–—-]/);if(pts.length>=2){const lo=parseFloat(pts[0]),hi=parseFloat(pts[1]);if(!isNaN(lo))a.setupLow=lo;if(!isNaN(hi))a.setupHigh=hi;}},
+    rebuildShort(a){a.retainerShort=a.varLabel?(a.retainerBase||'$0')+'/mo (+ variable)':(a.retainerBase||'$0')+'/mo fixed';},
+    syncQuoteAgent(agent){this.quote.forEach(qi=>{if(qi.name===agent.name&&qi.platform===agent._platformName){Object.assign(qi,{setup:agent.setup,setupLow:agent.setupLow,setupHigh:agent.setupHigh,tier:agent.tier,retainerBase:agent.retainerBase,retainerNum:agent.retainerNum,retainerShort:agent.retainerShort,varRate:agent.varRate,varMin:agent.varMin});}});},
+    resetOneAgent(agent){const defP=this._defaults.find(p=>p.name===agent._platformName);if(!defP)return;const defA=defP.agents.find(a=>a.name===agent.name);if(!defA)return;const uid=agent._uid,pname=agent._platformName;Object.assign(agent,JSON.parse(JSON.stringify(defA)));agent._uid=uid;agent._platformName=pname;},
+    resetAllAgents(){if(!confirm(this.lang==='es'?'¿Resetear TODOS los agentes?':'Reset ALL agents to defaults?'))return;this.platforms=buildPlatforms();},
+
+    applyLogoUrl(){this.customLogo=this.logoUrlInput;this.persist();},
+    onLogoFile(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{this.customLogo=ev.target.result;this.logoUrlInput=ev.target.result;this.persist();};r.readAsDataURL(f);},
+    onPlatFile(e,pid){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{const p=this.platforms.find(pl=>pl.id===pid);if(p){p.img=ev.target.result;this.persist();}};r.readAsDataURL(f);},
+    resetPlatImg(pid){const p=this.platforms.find(pl=>pl.id===pid);if(p){p.img=DEFAULT_IMGS[pid]||p.img;this.persist();}},
+
+    openPdfCustomizer(){this.previewQ={name:this.projectName,agents:this.quote};this.showCustomizer=true;},
+    openPdfCustomizerForProject(pi){this.previewQ={name:this.savedProjects[pi].name,agents:this.savedProjects[pi].agents};this.showCustomizer=true;},
+    openPdfCustomizerForVersion(pi,vi){const v=this.savedProjects[pi].versions[vi];this.previewQ={name:this.savedProjects[pi].name+' v'+(vi+1),agents:v.agents};this.showCustomizer=true;},
+    openPDF(){this.showCustomizer=false;this.showModal=true;},
+    previewPlatforms(){return[...new Set(this.previewQ.agents.map(q=>q.platform))];},
+    previewByPlatform(p){return this.previewQ.agents.filter(q=>q.platform===p);},
+
+    saveProject(){
+      if(!this.quote.length){alert(this.lang==='es'?'Agregá agentes primero.':'Add agents first.');return;}
+      const name=this.projectName||(this.lang==='es'?'Proyecto ':'Project ')+(this.savedProjects.length+1);
+      const snapshot={date:new Date().toLocaleString('en-US',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}),agents:JSON.parse(JSON.stringify(this.quote)),setupLow:this.setupLow(),setupHigh:this.setupHigh(),retainerTotal:this.retainerTotal()};
+      const ei=this.savedProjects.findIndex(p=>p.id===this.currentProjectId);
+      if(ei>=0){const proj=this.savedProjects[ei];if(!proj.versions)proj.versions=[];proj.versions.push(snapshot);proj.name=name;proj.date=snapshot.date;proj.agents=snapshot.agents;proj.setupLow=snapshot.setupLow;proj.setupHigh=snapshot.setupHigh;proj.retainerTotal=snapshot.retainerTotal;}
+      else{const id=Date.now();this.savedProjects.unshift({id,name,date:snapshot.date,agents:snapshot.agents,setupLow:snapshot.setupLow,setupHigh:snapshot.setupHigh,retainerTotal:snapshot.retainerTotal,versions:[snapshot],_showVersions:false});this.currentProjectId=id;}
+      this.persist();
+      const btn=event.target;const orig=btn.textContent;btn.textContent='✓ '+(this.lang==='es'?'Guardado!':'Saved!');setTimeout(()=>btn.textContent=orig,1500);
+    },
+    loadProject(pi){const proj=this.savedProjects[pi];this.quote=JSON.parse(JSON.stringify(proj.agents));this.projectName=proj.name;this.currentProjectId=proj.id;this.activeTab='quoter';},
+    loadVersion(pi,vi){const v=this.savedProjects[pi].versions[vi];this.quote=JSON.parse(JSON.stringify(v.agents));this.projectName=this.savedProjects[pi].name;this.currentProjectId=this.savedProjects[pi].id;this.activeTab='quoter';},
+    deleteProject(pi){if(!confirm(this.lang==='es'?'¿Eliminar?':'Delete?'))return;if(this.currentProjectId===this.savedProjects[pi].id)this.currentProjectId=null;this.savedProjects.splice(pi,1);},
+    clearAllProjects(){if(!confirm(this.lang==='es'?'¿Eliminar TODOS los proyectos?':'Delete ALL projects?'))return;this.savedProjects=[];this.currentProjectId=null;},
+
+    loadCompareProject(side){const idxStr=side==='A'?this.compareAId:this.compareBId;if(idxStr===''||idxStr===null)return;const idx=parseInt(idxStr);if(isNaN(idx)||!this.savedProjects[idx])return;const proj=this.savedProjects[idx];const agents=JSON.parse(JSON.stringify(proj.agents));if(side==='A')this.compareA={name:proj.name,agents};else this.compareB={name:proj.name,agents};},
+    loadCurrentToCompare(side){if(side==='A')this.compareA={name:this.projectName||'Current',agents:JSON.parse(JSON.stringify(this.quote))};else this.compareB={name:this.projectName||'Current',agents:JSON.parse(JSON.stringify(this.quote))};},
+    compareSetupLow(side){return(side==='A'?this.compareA:this.compareB).agents.reduce((s,a)=>s+(a.setupLow||0),0);},
+    compareRetainer(side){return(side==='A'?this.compareA:this.compareB).agents.reduce((s,i)=>{const b=i.retainerNum||0;const o=Math.max(0,(i.varValue||0)-(i.varMin||0));return s+b+Math.round(o*(i.varRate||0));},0);},
+
+    exportComparePDF(){
+      const roiA=this.calcROI(this.compareA.agents),roiB=this.calcROI(this.compareB.agents);
+      const win=window.open('','_blank');
+      win.document.write(`<!DOCTYPE html><html><head><title>SWL Compare</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Inter',sans-serif;font-size:12px;background:#fff;padding:28px 32px;color:#1a1a1a}h1{font-size:18px;font-weight:800;margin-bottom:4px}p.sub{font-size:11px;color:#888;margin-bottom:20px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}.col{border:1px solid #eee;border-radius:8px;padding:14px}.col h2{font-size:13px;font-weight:700;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #eee}table{width:100%;border-collapse:collapse;font-size:11px}th{text-align:left;padding:5px 7px;background:#f8f8f8;font-weight:600;color:#666;font-size:10px;border-bottom:1px solid #eee}td{padding:5px 7px;border-bottom:1px solid #f5f5f5}tr:last-child td{border-bottom:none}.summary{border:1px solid #eee;border-radius:8px;padding:14px}.summary h2{font-size:13px;font-weight:700;margin-bottom:10px}.row{display:grid;grid-template-columns:160px 1fr 1fr;gap:10px;padding:6px 0;border-bottom:1px solid #f5f5f5;font-size:11px}.row:last-child{border-bottom:none}.metric{color:#888}.val{font-weight:700;font-family:monospace}.footer{margin-top:16px;font-size:9px;color:#aaa;display:flex;justify-content:space-between}@media print{body{padding:16px}}</style></head><body><h1>SWL Scenario Comparison</h1><p class="sub">Prepared by SWL Consulting · ${this.today()}</p><div class="grid"><div class="col"><h2>${this.compareA.name||'Scenario A'}</h2><table><thead><tr><th>Agent</th><th>Retainer</th></tr></thead><tbody>${this.compareA.agents.map(a=>`<tr><td>${a.name}</td><td style="font-family:monospace">$${this.fmtN(a.retainerNum||0)}/mo</td></tr>`).join('')}</tbody></table></div><div class="col"><h2>${this.compareB.name||'Scenario B'}</h2><table><thead><tr><th>Agent</th><th>Retainer</th></tr></thead><tbody>${this.compareB.agents.map(a=>`<tr><td>${a.name}</td><td style="font-family:monospace">$${this.fmtN(a.retainerNum||0)}/mo</td></tr>`).join('')}</tbody></table></div></div><div class="summary"><h2>Comparison Summary</h2><div class="row" style="font-weight:700;color:#888;font-size:10px"><span></span><span>${this.compareA.name||'A'}</span><span>${this.compareB.name||'B'}</span></div><div class="row"><span class="metric">Agents</span><span class="val">${this.compareA.agents.length}</span><span class="val">${this.compareB.agents.length}</span></div><div class="row"><span class="metric">Setup (low)</span><span class="val">$${this.fmtN(this.compareSetupLow('A'))}</span><span class="val">$${this.fmtN(this.compareSetupLow('B'))}</span></div><div class="row"><span class="metric">Monthly Retainer</span><span class="val">$${this.fmtN(this.compareRetainer('A'))}/mo</span><span class="val">$${this.fmtN(this.compareRetainer('B'))}/mo</span></div><div class="row"><span class="metric">Hours saved/mo</span><span class="val">${roiA.hours}h</span><span class="val">${roiB.hours}h</span></div><div class="row"><span class="metric">Avg ROI</span><span class="val">${roiA.roi}x</span><span class="val">${roiB.roi}x</span></div><div class="row"><span class="metric">Payback period</span><span class="val">${roiA.payback} mo</span><span class="val">${roiB.payback} mo</span></div></div><div class="footer"><span>SWL Consulting · www.swlconsulting.com</span><span>${this.today()}</span></div></body></html>`);
+      win.document.close();setTimeout(()=>{win.focus();win.print();},500);
+    },
+
+    fmtN(n){return Math.round(n).toLocaleString('en-US');},
+    today(){return new Date().toLocaleDateString(this.lang==='es'?'es-AR':'en-US',{year:'numeric',month:'long',day:'numeric'});},
+
+    printPDF(){
+      const content=document.getElementById('pdf-content').innerHTML;
+      const win=window.open('','_blank');
+      win.document.write(`<!DOCTYPE html><html><head><title>${this.previewQ.name||'SWL Quote'}</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Inter',sans-serif;font-size:12px;background:#fff;padding:26px 30px;max-width:760px;margin:0 auto;color:#1a1a1a}@media print{body{padding:16px}}</style></head><body>${content}</body></html>`);
+      win.document.close();setTimeout(()=>{win.focus();win.print();},500);
+    },
+
+    exportCSV(){
+      const SEP=';';
+      const rows=[['Platform','Tier Section','Agent','Tier','Setup Min (USD)','Setup Max (USD)','Retainer Base (USD)','Retainer Computed (USD)','Discount %','Note']];
+      this.quote.forEach(item=>{
+        const base=item.retainerNum||0;
+        const over=Math.max(0,(item.varValue||0)-(item.varMin||0));
+        const gross=base+Math.round(over*(item.varRate||0));
+        const disc=this.getAgentDiscount(item);
+        const computed=Math.round(gross*(1-disc/100));
+        const secLabel=item.tier===1?'Light':item.tier===2?'Full':'Add-on';
+        rows.push([item.platform,secLabel,item.name,'T'+item.tier,item.setupLow||0,item.setupHigh||0,base,computed,disc+'%',(item.note&&item.note[this.lang])||'']);
+      });
+      rows.push([]);
+      rows.push(['TOTALS','','','',this.setupLow(),this.setupHigh(),this.quote.reduce((s,i)=>s+(i.retainerNum||0),0),this.retainerTotal(),'','']);
+      const BOM='\uFEFF';
+      const csv=BOM+rows.map(r=>r.map(c=>{const v=String(c);return(v.includes(SEP)||v.includes('"')||v.includes('\n'))?'"'+v.replace(/"/g,'""')+'"':v;}).join(SEP)).join('\r\n');
+      const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+      const url=URL.createObjectURL(blob);
+      const el=document.createElement('a');el.href=url;el.download=(this.projectName||'swl-quote')+'.csv';el.click();
+      URL.revokeObjectURL(url);
+    },
+  };
+};
+</script>
+</body>
+</html>
